@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "esnext",
+        "outDir": "dist",
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "strict": true,
+        "baseUrl": "./",
+        "paths": {
+            "@root/*": ["src/*"]
+        }
+    },
+    "include": ["**/*.ts"]
+}
