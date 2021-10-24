@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
+import { frameLoop } from "@root/modules/core/FrameLoop";
 
 export class ThreeLoader {
     renderer: THREE.WebGLRenderer;
@@ -8,7 +10,7 @@ export class ThreeLoader {
     constructor() {
         this.scene = new THREE.Scene();
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild( this.renderer.domElement);
 
@@ -27,16 +29,7 @@ export class ThreeLoader {
             render()
         };
         window.addEventListener('resize', onWindowResize, false);
-
-        const controls = new OrbitControls( this.camera,  this.renderer.domElement);
-
-        const animate = () => {
-            requestAnimationFrame(animate);
-            controls.update();
-            render();
-        };
-
-        animate();
+        frameLoop.addCallback(render);
     }
 }
 

@@ -4,6 +4,7 @@
         "module": "esnext",
         "outDir": "dist",
         "sourceMap": true,
+        "noImplicitAny": false,
         "moduleResolution": "node",
         "strict": true,
         "baseUrl": "./",
