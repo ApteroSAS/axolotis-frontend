@@ -1,18 +1,30 @@
 import * as THREE from 'three';
-import Component from '@root/modules/core/ECS/Component'
-import { threeLoader } from "@root/modules/core/Three/ThreeLoader";
+import Component from '@root/modules/core/ecs/Component'
 import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
+import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
+export class Factory extends FactoryAbstractInterface<Sky>{
+    async create(config): Promise<Sky> {
+        let three = await loadComponent<ThreeLib>("ThreeLib");
+        let sky = new Sky();
+        await sky.initialize(three);
+        return sky;
+    }
+}
 
-export default class Sky extends Component{
+export default class Sky implements Component{
     private scene: any;
     private texture: any;
     constructor(){
-        super();
     }
 
-    async initialize(){
-        this.scene = threeLoader.scene;
+    getName(): string {
+        return "Sky";
+    }
+
+    async initialize(three:ThreeLib){
+        this.scene = three.scene;
         this.texture = await loadAssets("assets/static/demo2/sky.jpg");
         const hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFFF, 1);
         hemiLight.color.setHSL(0.6, 1, 0.6);

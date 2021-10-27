@@ -1,13 +1,14 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
-import { frameLoop } from "@root/modules/core/FrameLoop";
+import Component from "@root/modules/core/ecs/Component";
+import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { FrameLoop } from "@root/modules/core/FrameLoop";
+import { Input } from "@root/modules/controller/Input";
 
-export class ThreeLoader {
+export class ThreeLib implements Component{
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
-    constructor() {
+    constructor(frameLoop:FrameLoop) {
         this.scene = new THREE.Scene();
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -38,7 +39,16 @@ export class ThreeLoader {
         window.addEventListener('resize', onWindowResize, false);
         frameLoop.addCallback(render);
     }
+
+    getName(): string {
+        return ThreeLib.name;
+    }
 }
 
-export const threeLoader:ThreeLoader = new ThreeLoader();
+export class ThreeLibFactory extends FactoryAbstractInterface<ThreeLib>{
+    async create(config): Promise<ThreeLib> {
+        let frameLoop = await loadComponent<FrameLoop>("FrameLoop");
+        return new ThreeLib(frameLoop);
+    }
+}
 

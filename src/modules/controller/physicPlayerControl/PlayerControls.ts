@@ -1,10 +1,34 @@
 import * as THREE from "three";
 import { Euler, Quaternion, Vector3 } from "three";
-import Component from "@root/modules/core/ECS/Component";
-import Input from "./Input";
-import { threeLoader } from "@root/modules/core/Three/ThreeLoader";
+import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import { Input } from "@root/modules/controller/Input";
+import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
+import { FrameLoop } from "@root/modules/core/FrameLoop";
+import Component from "@root/modules/core/ecs/Component";
 
-export default class PlayerControls extends Component{
+export class Factory extends FactoryAbstractInterface<PlayerControls>{
+    async create(config): Promise<PlayerControls> {
+        let three = loadComponent<ThreeLib>("ThreeLib");
+        let ammo = loadComponent<AmmoPhysics>("AmmoPhysics");
+        let input = loadComponent<Input>("Input");
+        let frameLoop = loadComponent<FrameLoop>("FrameLoop");
+        let position = new THREE.Vector3(2.14, 1.48, -1.36);
+        let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI * 0.5);
+        let playerPhysics = new PlayerPhysics(await ammo);
+        playerPhysics.Initialize(position.x, position.y, position.z);
+        let playerControls = new PlayerControls(playerPhysics,position,rotation,await three,await input);
+        playerControls.Initialize();
+        (await frameLoop).addCallback((delta)=>{
+            playerControls.Update(delta);
+            playerPhysics.PhysicsUpdate();
+        })
+        return playerControls;
+    }
+}
+
+export default class PlayerControls implements Component{
     private camera: any;
     private timeZeroToMax: number;
     private decceleration: number;
@@ -28,13 +52,17 @@ export default class PlayerControls extends Component{
     private zeroVec: Ammo.btVector3 | any;
     private position: Vector3;
     private rotation: Quaternion;
-    constructor(physicsComponent,position,rotation){
-        super();
+
+    getName(): string {
+        return PlayerControls.name;
+    }
+
+    constructor(physicsComponent,position,rotation,three:ThreeLib,private input:Input){
         this.physicsComponent = physicsComponent;
         this.position = position;
         this.rotation = rotation;
 
-        this.camera = threeLoader.camera;
+        this.camera = three.camera;
 
         this.timeZeroToMax = 0.08;
 
@@ -65,11 +93,11 @@ export default class PlayerControls extends Component{
         this.angles.setFromQuaternion(this.rotation);
         this.UpdateRotation();
 
-        Input.AddMouseMoveListner(this.OnMouseMove);
+        this.input.AddMouseMoveListner(this.OnMouseMove);
 
         document.addEventListener('pointerlockchange', this.OnPointerlockChange)
 
-        Input.AddClickListner( () => {
+        this.input.AddClickListner( () => {
             if(!this.isLocked){
                 document.body.requestPointerLock();
             }
@@ -122,13 +150,13 @@ export default class PlayerControls extends Component{
 
     Update(t){
         t = t * 0.001;
-        const forwardFactor = Input.GetKeyDown("KeyS") - Input.GetKeyDown("KeyW");
-        const rightFactor = Input.GetKeyDown("KeyD") - Input.GetKeyDown("KeyA");
+        const forwardFactor = this.input.GetKeyDown("KeyS") - this.input.GetKeyDown("KeyW");
+        const rightFactor = this.input.GetKeyDown("KeyD") - this.input.GetKeyDown("KeyA");
         const direction = this.moveDir.set(rightFactor, 0.0, forwardFactor).normalize();
 
         const velocity = this.physicsBody.getLinearVelocity();
 
-        if(Input.GetKeyDown('Space') && this.physicsComponent.canJump){
+        if(this.input.GetKeyDown('Space') && this.physicsComponent.canJump){
             velocity.setY(this.jumpVelocity);
             this.physicsComponent.canJump = false;
         }

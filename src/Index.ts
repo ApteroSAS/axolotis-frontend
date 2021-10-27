@@ -1,29 +1,53 @@
 
 import { load } from "@root/modules/_moduleLoader/CodeLoader";
-import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import LevelSetup from "@root/modules/scenes/demo2/LevelSetup";
-import Sky2 from "@root/modules/scenes/demo2/Sky2";
-import PlayerControls from "@root/modules/core/Controller/PhysicPlayerControl/PlayerControls";
-import PlayerPhysics from "@root/modules/core/Controller/PhysicPlayerControl/PlayerPhysics";
 export const BUILD_VERSION = require('../package.json').version;
 console.log(BUILD_VERSION);
-import Input from '@root/modules/core/Controller/PhysicPlayerControl/Input'
-import * as THREE from "three";
-import { frameLoop } from "@root/modules/core/FrameLoop";
-import { ammoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import { loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 
+//level file.json list the entity of the system
+const list = {
+    scene:{
+        type:"webpack-ecs-loader",
+        module : "LevelSetup",
+        config :{}
+    },
+    sky:{
+        type:"webpack-ecs-loader",
+        module : "Sky2",
+        config :{}
+    },
+    player:{
+        type:"webpack-ecs-loader",
+        module : "PlayerControls",
+        config :{}
+    },
+    pluginExample1:{
+        type:"scriptjs-loader",
+        url : "@root/modules/scenes/demo1/GLTFScene"
+    }
+}
 
-load([
+let promises:(()=>Promise<any>)[] = [];
+for(const key in list) {
+    const entry = list[key];
+    if(entry.type === "webpack-ecs-loader") {
+        promises.push(()=>loadComponent(entry.module));
+    }
+}
+
+[
     //() => import("@root/modules/scenes/demo1/GLTFScene"),
-    //() => import("@root/modules/core/Controller/FpsController"),
-    () => loadAssets("assets/static/demo2/level.glb"),
-    () => loadAssets("assets/static/demo2/sky.jpg")
+    //() => import("@root/modules/core/controller/FpsController"),
+    //() => loadAssets("assets/static/demo2/level.glb"),
+    //() => loadAssets("assets/static/demo2/sky.jpg")
     /*() => {
         return new Promise(resolve => {
             setTimeout(resolve,1000);
         })
     }*/
-],(progress, total) => {
+]
+
+load(promises,(progress, total) => {
     console.log("["+progress + "/" + total + "]");
     const progressbar:any = document.getElementById('progress');
     progressbar.style.width = `${((progress/total)*100)}%`;
@@ -32,6 +56,11 @@ load([
     (document.getElementById("progresscontainer") as any).className += "load";
 });
 
+//console.log(threeLoader);
+//const module = "/modules/core/three/ThreeLoader.js";
+//world.addComponentAsync<ThreeLoader>(()=>{return import(`${module}`) as any});
+//world.addComponentAsync<ThreeLoader>(()=>{return import(/* webpackIgnore: true */ module) as any});
+/*
 async function init()
 {
     Input.ClearEventListners();
@@ -53,4 +82,4 @@ async function init()
     })
 }
 
-init();
+init();*/

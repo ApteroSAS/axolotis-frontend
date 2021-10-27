@@ -1,6 +1,7 @@
+import { FactoryAbstractInterface } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import Component from "@root/modules/core/ecs/Component";
 
-
-class Input{
+export class Input implements Component{
     private _keyMap: {};
     private events: any[];
     constructor(){
@@ -9,6 +10,10 @@ class Input{
 
         this.AddKeyDownListner(this._onKeyDown);
         this.AddKeyUpListner(this._onKeyUp);
+    }
+
+    getName(): string {
+        return Input.name;
     }
 
     _addEventListner(element, type, callback){
@@ -63,5 +68,8 @@ class Input{
     }
 }
 
-const inputInstance = new Input();
-export default inputInstance;
+export class Factory extends FactoryAbstractInterface<Input>{
+    async create(config): Promise<Input> {
+        return new Input();
+    }
+}

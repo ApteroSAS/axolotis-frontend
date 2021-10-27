@@ -1,6 +1,9 @@
 import {Ammo, AmmoHelper} from "./AmmoLib";
+import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import Component from "@root/modules/core/ecs/Component";
+import { FrameLoop } from "@root/modules/core/FrameLoop";
 
-export class AmmoPhysics {
+export class AmmoPhysics implements Component{
 
   physicsUpdate = (world, timeStep)=>{
     //this.entityManager.PhysicsUpdate(world, timeStep);
@@ -30,12 +33,26 @@ export class AmmoPhysics {
   }
 
   step(elapsedTime){
-    ammoPhysics.physicsWorld.stepSimulation( elapsedTime, 10 );
+    this.physicsWorld.stepSimulation( elapsedTime, 10 );
   }
 
   getAmmo(){
     return Ammo;
   }
+
+  getName(): string {
+    return AmmoPhysics.name;
+  }
 }
 
-export let ammoPhysics = new AmmoPhysics();
+export class Factory extends FactoryAbstractInterface<AmmoPhysics>{
+  async create(config): Promise<AmmoPhysics> {
+    let frameLoop = loadComponent<FrameLoop>("FrameLoop");
+    const ammo = new AmmoPhysics();
+    await ammo.setupPhysics();
+    (await frameLoop).addCallback((delta)=>{
+      ammo.step( delta*0.001);
+    });
+    return ammo;
+  }
+}

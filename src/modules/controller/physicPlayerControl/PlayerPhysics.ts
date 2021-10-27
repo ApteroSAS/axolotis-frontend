@@ -1,19 +1,16 @@
-import Component from "@root/modules/core/ECS/Component";
-import {Ammo} from '@root/modules/core/ammo/AmmoLib'
-import { ammoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import {Ammo} from "@root/modules/core/ammo/AmmoLib";
+import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 
-//Bullet enums
 const CF_KINEMATIC_OBJECT = 2;
 const DISABLE_DEACTIVATION = 4;
 
-export default class PlayerPhysics extends Component{
+export default class PlayerPhysics{
     private world: any;
     private body: any;
     private canJump: boolean;
     private up: Ammo.btVector3;
     private tempVec: Ammo.btVector3;
-    constructor(){
-        super();
+    constructor(ammoPhysics:AmmoPhysics){
         this.world = ammoPhysics.physicsWorld;
         this.body = null;
         this.canJump = false;

@@ -1,21 +1,33 @@
-import Component from '@root/modules/core/ECS/Component'
+import Component from '@root/modules/core/ecs/Component'
 import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
-import { ammoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
-import { threeLoader } from "@root/modules/core/Three/ThreeLoader";
+import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
+import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
-export default class LevelSetup extends Component{
+export class Factory extends FactoryAbstractInterface<LevelSetup>{
+    async create(config): Promise<LevelSetup> {
+        let three = await loadComponent<ThreeLib>("ThreeLib");
+        let ammo = await loadComponent<AmmoPhysics>("AmmoPhysics");
+        let module = new LevelSetup();
+        await module.loadScene(ammo,three);
+        return module;
+    }
+}
+
+export default class LevelSetup implements Component{
     private scene: any;
     private physicsWorld: any;
     private mesh: any;
-    constructor(){
-        super();
+    constructor(){    }
+
+    getName(): string {
+        return "LevelSetup";
     }
 
-    async loadScene(){
+    async loadScene(ammoPhysics:AmmoPhysics,threeLib:ThreeLib){
 
-        this.scene = threeLoader.scene;
-        await ammoPhysics.setupPhysics();
+        this.scene = threeLib.scene;
         this.physicsWorld = ammoPhysics.physicsWorld;
         this.mesh = await loadAssets("assets/static/demo2/level.glb");
         this.mesh = this.mesh.scene;

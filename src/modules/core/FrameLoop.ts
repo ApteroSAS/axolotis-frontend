@@ -1,5 +1,15 @@
+import Component from "@root/modules/core/ecs/Component";
+import { FactoryAbstractInterface } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 
-export class FrameLoop {
+export class Factory extends FactoryAbstractInterface<FrameLoop>{
+    async create(config): Promise<FrameLoop> {
+        let module = new FrameLoop();
+        return module;
+    }
+}
+
+
+export class FrameLoop implements Component{
     //TODO frame loop
     // setInterval Frameloop
     // animationFrame
@@ -25,6 +35,8 @@ export class FrameLoop {
     addCallback(callback:(delta:number)=>void){
         this.callbacks.push(callback);
     }
-}
 
-export const frameLoop = new FrameLoop();
+    getName(): string {
+        return FrameLoop.name;
+    }
+}

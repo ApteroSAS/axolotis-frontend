@@ -2,12 +2,10 @@ const path = require("path");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let mode = "dev";
 module.exports = {
     entry: {
         index: path.join(__dirname, "Index.ts")
     },
-    devtool: mode === "production" ? "source-map" : "inline-source-map",
     module: {
         rules: [
             {
@@ -29,8 +27,11 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"]
     },
     output: {
-        filename: "bundle.js",
+        filename: "assets/js/[name]-[chunkhash].js",
         path: path.resolve(__dirname, "../dist/")
+    },
+    optimization: {
+        minimize:true,
     },
     plugins: [
         new HTMLWebpackPlugin({
