@@ -1,9 +1,14 @@
 import Component from "@root/modules/core/ecs/Component";
 import { FactoryAbstractInterface } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
 
 export class Factory extends FactoryAbstractInterface<FrameLoop>{
     async create(config): Promise<FrameLoop> {
+        let codeLoader = this.world.getFirstComponentByName<CodeLoaderComponent>(CodeLoaderComponent.name);
         let module = new FrameLoop();
+        codeLoader.awaitInitialLoading().then(()=>{
+            module.startLoop();
+        })
         return module;
     }
 }
@@ -21,6 +26,9 @@ export class FrameLoop implements Component{
     callbacks:((delta:number)=>void)[] = [];
     private prevTime: number = 0;
     constructor() {
+    }
+
+    startLoop(){
         const animate = (t) => {
             const delta = ( t - this.prevTime );
             this.prevTime = t;
