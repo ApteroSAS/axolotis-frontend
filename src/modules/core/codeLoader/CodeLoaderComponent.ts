@@ -28,7 +28,7 @@ export class CodeLoaderComponent implements Component {
         for (const key in list) {
             const entry = list[key];
             if (entry.type === "webpack-ecs-loader" && entry.module) {
-                promises.push(() => loadComponent(entry.module));
+                promises.push(() => loadComponent(entry.module,entry.config));
             }
             if (entry.type === "assets-loader" && entry.url) {
                 promises.push(() => loadAssets(entry.url));

@@ -1,62 +1,24 @@
-import Component from '@root/modules/core/ecs/Component'
 import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
-export class Factory extends FactoryAbstractInterface<LevelSetup>{
-    async create(config): Promise<LevelSetup> {
-        let three = await loadComponent<ThreeLib>("ThreeLib");
-        let ammo = await loadComponent<AmmoPhysics>("AmmoPhysics");
-        let module = new LevelSetup();
-        await module.loadScene(ammo,three);
-        return module;
-    }
-}
-
-export default class LevelSetup implements Component{
+export default class SceneLoader{
     private scene: any;
     private physicsWorld: any;
     private mesh: any;
     constructor(){    }
 
-    getName(): string {
-        return "LevelSetup";
-    }
-
-    async loadScene(ammoPhysics:AmmoPhysics,threeLib:ThreeLib){
+    async loadScene(sceneUrl:string,ammoPhysics:AmmoPhysics,threeLib:ThreeLib){
 
         this.scene = threeLib.scene;
         this.physicsWorld = ammoPhysics.physicsWorld;
-        this.mesh = await loadAssets("assets/static/demo2/level.glb");
+        this.mesh = await loadAssets(sceneUrl);
         this.mesh = this.mesh.scene;
 
         this.mesh.traverse( ( node ) => {
-            if ( node.isMesh || node.isLight ) { node.castShadow = true; }
             if(node.isMesh){
-                node.receiveShadow = true;
-                //node.material.wireframe = true;
                 this.setStaticCollider(node);
-            }
-
-            if(node.isLight){
-                node.intensity = 3;
-                const shadow = node.shadow;
-                const lightCam = shadow.camera;
-
-                shadow.mapSize.width = 1024 * 3;
-                shadow.mapSize.height = 1024 * 3;
-                shadow.bias = -0.00007;
-
-                const dH = 35, dV = 35;
-                lightCam.left = -dH;
-                lightCam.right = dH;
-                lightCam.top = dV;
-                lightCam.bottom = -dV;
-
-                //const cameraHelper = new THREE.CameraHelper(lightCam);
-                //this.scene.add(cameraHelper);
             }
         });
 

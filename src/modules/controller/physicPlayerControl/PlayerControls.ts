@@ -14,7 +14,10 @@ export class Factory extends FactoryAbstractInterface<PlayerControls>{
         let ammo = loadComponent<AmmoPhysics>("AmmoPhysics");
         let input = loadComponent<Input>("Input");
         let frameLoop = loadComponent<FrameLoop>("FrameLoop");
-        let position = new THREE.Vector3(2.14, 1.48, -1.36);
+        //let position = new THREE.Vector3(2.14, 1.48, -1.36);
+        let position = new THREE.Vector3((config.position && config.position.x) || 0,
+            (config.position && config.position.y) || 0,
+            (config.position && config.position.z) || 0);
         let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI * 0.5);
         let playerPhysics = new PlayerPhysics(await ammo);
         playerPhysics.Initialize(position.x, position.y, position.z);
