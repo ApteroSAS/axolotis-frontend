@@ -15,11 +15,11 @@ console.log(BUILD_VERSION);
 //level file.json list the entity of the system
 
 const list = [
-    /*{
+    {
         type: "webpack-ecs-loader",
         module: "LevelSetup",
         config: {}
-    },*/
+    },
     {
         type: "webpack-ecs-loader",
         module: "Sky2",
@@ -28,15 +28,6 @@ const list = [
     {
         type: "webpack-ecs-loader",
         module: "PlayerControls",
-        config: {
-            position:{
-                x:0,y:5,z:0
-            }
-        }
-    },
-    {
-        type: "webpack-ecs-loader",
-        module: "SpokeLoader",
         config: {}
     },
     {
@@ -44,7 +35,7 @@ const list = [
         url: "assets/static/demo2/level.glb"
     }
 ];
-
+/*
 const codeLoaderComponent = new CodeLoaderComponent();
 world.addComponent(codeLoaderComponent);
 
@@ -55,5 +46,37 @@ codeLoaderComponent.startLoading(list,(progress, total) => {
 }).then(()=>{
     console.log("loading complete");
     (document.getElementById("progresscontainer") as any).className += "load";
-});
+});*/
 
+async function staticInit() {
+    let frameLoop = new FrameLoop();
+    let threeLib = new ThreeLib(frameLoop);
+    let ammoPhysics = new AmmoPhysics();
+
+    await ammoPhysics.setupPhysics();
+    frameLoop.addCallback((delta) => {
+        ammoPhysics.step(delta * 0.001);
+    });
+    let levelSetup = new LevelSetup();
+    await levelSetup.loadScene(ammoPhysics, threeLib);
+    let sky = new Sky();
+    await sky.initialize(threeLib);
+
+    let position = new THREE.Vector3(2.14, 1.48, -1.36);
+    let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI * 0.5);
+    let playerPhysics = new PlayerPhysics(ammoPhysics);
+    playerPhysics.Initialize(position.x, position.y, position.z);
+    let input = new Input();
+    let playerControls = new PlayerControls(playerPhysics, position, rotation, threeLib, input);
+    playerControls.Initialize();
+    frameLoop.addCallback((delta) => {
+        playerControls.Update(delta);
+        playerPhysics.PhysicsUpdate();
+    })
+
+    frameLoop.startLoop();
+
+    console.log("loading complete");
+    (document.getElementById("progresscontainer") as any).className += "load";
+}
+staticInit();
