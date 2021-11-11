@@ -3,13 +3,13 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RoughnessMipmapper } from "three/examples/jsm/utils/RoughnessMipmapper.js";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 import Component from "@root/modules/core/ecs/Component";
 
-export class Factory extends FactoryAbstractInterface<GLTFScene>{
+export class Factory extends WebpackAsyncModuleFactory<GLTFScene>{
     async create(config): Promise<GLTFScene> {
-        let three = await loadComponent<ThreeLib>("ThreeLib");
+        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
         let module = new GLTFScene(three);
         return module;
     }

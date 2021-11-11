@@ -2,13 +2,13 @@ import Component from '@root/modules/core/ecs/Component'
 import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
-export class Factory extends FactoryAbstractInterface<LevelSetup>{
+export class Factory extends WebpackAsyncModuleFactory<LevelSetup>{
     async create(config): Promise<LevelSetup> {
-        let three = await loadComponent<ThreeLib>("ThreeLib");
-        let ammo = await loadComponent<AmmoPhysics>("AmmoPhysics");
+        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = await loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let module = new LevelSetup();
         await module.loadScene(ammo,three);
         return module;

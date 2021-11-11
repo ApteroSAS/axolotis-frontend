@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import { Euler, Quaternion, Vector3 } from "three";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { Input } from "@root/modules/controller/Input";
 import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
 import Component from "@root/modules/core/ecs/Component";
 
-export class Factory extends FactoryAbstractInterface<PlayerControls>{
+export class Factory extends WebpackAsyncModuleFactory<PlayerControls>{
     async create(config): Promise<PlayerControls> {
-        let three = loadComponent<ThreeLib>("ThreeLib");
-        let ammo = loadComponent<AmmoPhysics>("AmmoPhysics");
-        let input = loadComponent<Input>("Input");
-        let frameLoop = loadComponent<FrameLoop>("FrameLoop");
+        let three = loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
+        let input = loadComponent<Input>("@root/modules/controller/Input");
+        let frameLoop = loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
         //let position = new THREE.Vector3(2.14, 1.48, -1.36);
         let position = new THREE.Vector3((config.position && config.position.x) || 0,
             (config.position && config.position.y) || 0,

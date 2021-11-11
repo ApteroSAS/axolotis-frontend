@@ -1,4 +1,4 @@
-import { FactoryAbstractInterface } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import Component from "@root/modules/core/ecs/Component";
 
 export class Input implements Component{
@@ -68,7 +68,7 @@ export class Input implements Component{
     }
 }
 
-export class Factory extends FactoryAbstractInterface<Input>{
+export class Factory extends WebpackAsyncModuleFactory<Input>{
     async create(config): Promise<Input> {
         return new Input();
     }

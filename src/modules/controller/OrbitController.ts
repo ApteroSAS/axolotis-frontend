@@ -1,13 +1,13 @@
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
 import Component from "@root/modules/core/ecs/Component";
 
-export class Factory extends FactoryAbstractInterface<OrbitController>{
+export class Factory extends WebpackAsyncModuleFactory<OrbitController>{
     async create(config): Promise<OrbitController> {
-        let frameLoop = await loadComponent<FrameLoop>("FrameLoop");
-        let three = await loadComponent<ThreeLib>("ThreeLib");
+        let frameLoop = await loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
+        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
         let module = new OrbitController(three,frameLoop);
         return module;
     }

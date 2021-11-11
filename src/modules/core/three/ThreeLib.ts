@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import Component from "@root/modules/core/ecs/Component";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
 import { Input } from "@root/modules/controller/Input";
 
@@ -40,14 +40,15 @@ export class ThreeLib implements Component{
         frameLoop.addCallback(render);
     }
 
+    //TODO rename to getType
     getName(): string {
         return ThreeLib.name;
     }
 }
 
-export class ThreeLibFactory extends FactoryAbstractInterface<ThreeLib>{
+export class ThreeLibFactory extends WebpackAsyncModuleFactory<ThreeLib>{
     async create(config): Promise<ThreeLib> {
-        let frameLoop = await loadComponent<FrameLoop>("FrameLoop");
+        let frameLoop = await loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
         return new ThreeLib(frameLoop);
     }
 }

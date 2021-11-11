@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "pre-build": "node ./generator/generate-webpack-module.js",
     "build": "webpack --config ./src/webpack.prod.js",
     "dev": "webpack serve --config ./src/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "phoenix": "^1.6.2",
-    "three-ammo": "github:ApteroSAS/three-ammo"
+    "three-ammo": "github:ApteroSAS/three-ammo",
+    "tsutils": "^3.21.0"
   }
 }

@@ -60,7 +60,7 @@ and get scene url from message from
  */
 
 import { connectToReticulum, load } from "@root/modules/PhoenixUtils";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import Component from "@root/modules/core/ecs/Component";
 import SceneLoader from "@root/modules/SceneLoader";
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
@@ -83,11 +83,11 @@ export class SpokeRoomLoader implements Component {
     }
 }
 
-export class Factory extends FactoryAbstractInterface<SpokeRoomLoader> {
+export class Factory extends WebpackAsyncModuleFactory<SpokeRoomLoader> {
     async create(config): Promise<SpokeRoomLoader> {
 
-        let three = await loadComponent<ThreeLib>("ThreeLib");
-        let ammo = await loadComponent<AmmoPhysics>("AmmoPhysics");
+        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = await loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let spokeRoomLoader = new SpokeRoomLoader(ammo,three);
         await spokeRoomLoader.loadRoom("yUXD7A2");
         return spokeRoomLoader;

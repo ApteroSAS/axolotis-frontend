@@ -1,8 +1,8 @@
 import Component from "@root/modules/core/ecs/Component";
-import { FactoryAbstractInterface } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
 
-export class Factory extends FactoryAbstractInterface<FrameLoop>{
+export class Factory extends WebpackAsyncModuleFactory<FrameLoop>{
     async create(config): Promise<FrameLoop> {
         let codeLoader = this.world.getFirstComponentByName<CodeLoaderComponent>(CodeLoaderComponent.name);
         let module = new FrameLoop();

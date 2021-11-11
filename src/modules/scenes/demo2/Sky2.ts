@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import Component from '@root/modules/core/ecs/Component'
 import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
-export class Factory extends FactoryAbstractInterface<Sky>{
+export class Factory extends WebpackAsyncModuleFactory<Sky>{
     async create(config): Promise<Sky> {
-        let three = await loadComponent<ThreeLib>("ThreeLib");
+        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
         let sky = new Sky();
         await sky.initialize(three);
         return sky;

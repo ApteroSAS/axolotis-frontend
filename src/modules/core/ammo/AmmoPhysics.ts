@@ -1,5 +1,5 @@
 import {Ammo, AmmoHelper} from "./AmmoLib";
-import { FactoryAbstractInterface, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import Component from "@root/modules/core/ecs/Component";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
 
@@ -45,9 +45,9 @@ export class AmmoPhysics implements Component{
   }
 }
 
-export class Factory extends FactoryAbstractInterface<AmmoPhysics>{
+export class Factory extends WebpackAsyncModuleFactory<AmmoPhysics>{
   async create(config): Promise<AmmoPhysics> {
-    let frameLoop = loadComponent<FrameLoop>("FrameLoop");
+    let frameLoop = loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
     const ammo = new AmmoPhysics();
     await ammo.setupPhysics();
     (await frameLoop).addCallback((delta)=>{

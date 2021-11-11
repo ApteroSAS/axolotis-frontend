@@ -1,14 +1,6 @@
 import { world } from "@root/modules/core/ecs/WorldEntity";
 import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
-import LevelSetup from "@root/modules/scenes/demo2/LevelSetup";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
-import { FrameLoop } from "@root/modules/core/FrameLoop";
-import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
-import Sky from "@root/modules/scenes/demo2/Sky2";
 import PlayerControls from "@root/modules/controller/physicPlayerControl/PlayerControls";
-import * as THREE from "three";
-import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
-import { Input } from "@root/modules/controller/Input";
 
 export const BUILD_VERSION = require('../package.json').version;
 console.log(BUILD_VERSION);
@@ -22,12 +14,12 @@ const list = [
     },*/
     {
         type: "webpack-ecs-loader",
-        module: "Sky2",
+        module: "@root/modules/scenes/demo2/Sky2",
         config: {}
     },
     {
         type: "webpack-ecs-loader",
-        module: "PlayerControls",
+        module: "@root/modules/controller/physicPlayerControl/PlayerControls",
         config: {
             position:{
                 x:0,y:5,z:0
@@ -36,7 +28,7 @@ const list = [
     },
     {
         type: "webpack-ecs-loader",
-        module: "SpokeLoader",
+        module: "@root/modules/SpokeRoomLoader",
         config: {}
     },
     {

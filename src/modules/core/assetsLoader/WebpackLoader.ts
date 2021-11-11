@@ -1,16 +1,23 @@
-export async function loadModuleAsync(name):Promise<any> {
-    //TODO autogenerate with webpack codegen
-    /* Webpack use module name for loading cand computin code bundle and split chunk so we cannot introduce variable in the import thus redirecting name to import*/
-    switch (name) {
-        case "ThreeLib": return import("@root/modules/core/three/ThreeLib");
-        case "AmmoPhysics": return import("@root/modules/core/ammo/AmmoPhysics");
-        case "Input": return import("@root/modules/controller/Input");
-        case "LevelSetup": return import("@root/modules/scenes/demo2/LevelSetup");
-        //tmp
-        case "Sky2": return import("@root/modules/scenes/demo2/Sky2");
-        case "FrameLoop": return import("@root/modules/core/FrameLoop");
-        case "PlayerControls": return import("@root/modules/controller/physicPlayerControl/PlayerControls");
-        case "SpokeLoader": return import("@root/modules/SpokeRoomLoader")
-        default: throw new Error(name+" not found in module list");
+import { loadModuleAsync } from "@root/generated/webpack/module/WebpackLoader";
+
+export interface WebpackModuleFactoryInterface{
+    webpackEcsIdField(): number;
+}
+
+export abstract class WebpackAsyncModuleFactory implements WebpackModuleFactoryInterface{
+    webpackEcsIdField(): number{
+        return 42;
     }
+    constructor(){}
+}
+
+export async function instanciateWebpackAsyncModule<T>(importPath:string,classname:string):Promise<T>{
+    const module = await loadModuleAsync(importPath);
+    for(const key in module){
+        const sub = module[key];
+        if(sub.prototype && sub.prototype.webpackEcsIdField && sub.prototype.constructor.name===classname){//identifiying factory
+            return new sub();
+        }
+    }
+    throw new Error("invalid factory");
 }
