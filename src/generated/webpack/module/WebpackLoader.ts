@@ -14,6 +14,6 @@
             case "@root/modules/scenes/demo2/LevelSetup": return import("@root/modules/scenes/demo2/LevelSetup");
             case "@root/modules/scenes/demo2/Sky2": return import("@root/modules/scenes/demo2/Sky2");
             case "@root/modules/scenes/demo3/SpokeRoomLoader": return import("@root/modules/scenes/demo3/SpokeRoomLoader");
-            default: throw new Error(name+" not found in module list");
+            default: throw new Error(name+" not found in module list - please run npm run pre-build");
         }
     }

@@ -31,8 +31,13 @@ export class CodeLoaderComponent implements Component {
             const entry = list[key];
             if (entry.type === "ecs-component-loader" && entry.module) {
                 promises.push( () => new Promise(async (resolve, reject) => {
-                    let module = await instanciateWebpackAsyncModule<ComponentFactory<Component>>(entry.module,entry.name || "Factory");
-                    module.create(world, entry.config || {});
+                    entry.name = entry.name || "Factory";
+                    let module = await instanciateWebpackAsyncModule<ComponentFactory<Component>>(entry.module,entry.name);
+                    let component = await module.create(world, entry.config || {});
+                    if(!component.getType){
+                        throw new Error("Not a component : "+entry.module+ " "+component.constructor.name)
+                    }
+                    world.addComponent(component);
                     resolve(module);
                 }));
             }

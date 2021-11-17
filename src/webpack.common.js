@@ -6,6 +6,9 @@ module.exports = {
     entry: {
         index: path.join(__dirname, "Index.ts")
     },
+    experiments:{
+        asyncWebAssembly:true,
+    },
     module: {
         rules: [
             {
@@ -46,6 +49,11 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {from: "src/assets/static/", to: "assets/static/" }
+            ]
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {from: "node_modules/ammo.js/builds/ammo.wasm.wasm", to: "assets/js/ammo.wasm.wasm" }
             ]
         })
     ]

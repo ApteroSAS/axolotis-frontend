@@ -105,7 +105,7 @@ function generateWebpackModules(
         /* Webpack use module name for loading and computing code bundle and split chunk so we cannot introduce variable in the import thus we create this redirecting file*/
         switch (name) {
             %CASES%
-            default: throw new Error(name+" not found in module list");
+            default: throw new Error(name+" not found in module list - please run npm run pre-build");
         }
     }`
 

@@ -79,7 +79,7 @@ export class SpokeRoomLoader implements Component {
         const { data, hubPhxChannel, vapiddata } = await load(hubid);
         const sceneURL = data.hubs[0].scene.model_url.replace(".bin",".glb");
         let sceneLoader = new SceneLoader();
-        sceneLoader.loadScene(sceneURL,this.ammoPhysics,this.threeLib);
+        await sceneLoader.loadScene(sceneURL,this.ammoPhysics,this.threeLib);
     }
 
     getType(): string {
@@ -93,7 +93,7 @@ export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoa
         let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
         let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let spokeRoomLoader = new SpokeRoomLoader(ammo,three);
-        await spokeRoomLoader.loadRoom("yUXD7A2");
+        await spokeRoomLoader.loadRoom(config.room);
         return spokeRoomLoader;
     }
 }

@@ -18,11 +18,11 @@ export class Factory implements WebpackLazyModule, ComponentFactory<PlayerContro
         let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let input = await services.getService<Input>("@root/modules/controller/Input");
         let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
-        let position = new THREE.Vector3(2.14, 1.48, -1.36);
+        //let position = new THREE.Vector3(2.14, 1.48, -1.36);
         //let position = new THREE.Vector3(0,5,0);
-        /*let position = new THREE.Vector3((config.position && config.position.x) || 0,
+        let position = new THREE.Vector3((config.position && config.position.x) || 0,
             (config.position && config.position.y) || 0,
-            (config.position && config.position.z) || 0);*/
+            (config.position && config.position.z) || 0);
         let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI * 0.5);
         let playerPhysics = new PlayerPhysics(await ammo);
         playerPhysics.Initialize(position.x, position.y, position.z);

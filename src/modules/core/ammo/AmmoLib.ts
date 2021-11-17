@@ -1,6 +1,9 @@
 import * as _Ammo from "ammo.js/builds/ammo"
 import * as THREE from 'three'
 import {ConvexHull} from 'three/examples/jsm/math/ConvexHull'
+var config = {
+    locateFile: () => 'ammo.js/builds/ammo.wasm.wasm'//TODO how to use ammo wasm
+}
 
 let Ammo:any = null;
 let rayOrigin:any = null;
@@ -59,7 +62,7 @@ function createConvexGeom (object) {
 class AmmoHelper{
 
   static init(callback = ()=>{}){
-    _Ammo().then((ammo)=>{
+    _Ammo(config).then((ammo)=>{
         Ammo = ammo;
         callback();
     });
