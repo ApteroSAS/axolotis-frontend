@@ -39,37 +39,37 @@ export class Entity implements Component {
         return this.components;
     }
 
-    public getComponentByName(n:string):Component[]{
+    public getComponentByType(n:string):Component[]{
         let ret:Component[] = [];
         this.components.forEach(comp => {
-            if( comp.getName() === n ){
+            if( comp.getType() === n ){
                 ret.push(comp);
             }
         });
         return ret;
     }
 
-    public getComponentByNameStartsWith(n:string):Component[]{
+    public getComponentByTypeStartsWith(n:string):Component[]{
         let ret:Component[] = [];
         this.components.forEach(comp => {
-            if( comp.getName().startsWith(n) ){
+            if( comp.getType().startsWith(n) ){
                 ret.push(comp);
             }
         });
         return ret;
     }
 
-    public getFirstComponentByNameStartsWith<T extends Component>(n:string):T{
-        return this.getComponentByNameStartsWith(n)[0] as T;
+    public getFirstComponentByTypeStartsWith<T extends Component>(n:string):T{
+        return this.getComponentByTypeStartsWith(n)[0] as T;
     }
 
-    public getFirstComponentByName<T extends Component>(n:string):T{
-        return this.getComponentByName(n)[0] as T;
+    public getFirstComponentByType<T extends Component>(n:string):T{
+        return this.getComponentByType(n)[0] as T;
     }
 
 
 
-     public getName(): string {
+     public getType(): string {
         return this.name;
     }
 

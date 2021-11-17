@@ -1,7 +1,8 @@
 import {Ammo, AmmoHelper} from "./AmmoLib";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import Component from "@root/modules/core/ecs/Component";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
 export class AmmoPhysics implements Component{
 
@@ -40,14 +41,14 @@ export class AmmoPhysics implements Component{
     return Ammo;
   }
 
-  getName(): string {
+  getType(): string {
     return AmmoPhysics.name;
   }
 }
 
-export class Factory extends WebpackAsyncModuleFactory<AmmoPhysics>{
-  async create(config): Promise<AmmoPhysics> {
-    let frameLoop = loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
+export class ServiceFactory implements WebpackLazyModule, Service<AmmoPhysics>{
+  async create(services:LazyServices): Promise<AmmoPhysics> {
+    let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
     const ammo = new AmmoPhysics();
     await ammo.setupPhysics();
     (await frameLoop).addCallback((delta)=>{

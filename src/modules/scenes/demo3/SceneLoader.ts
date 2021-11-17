@@ -1,6 +1,6 @@
 import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
-import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
+import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 
 export default class SceneLoader{

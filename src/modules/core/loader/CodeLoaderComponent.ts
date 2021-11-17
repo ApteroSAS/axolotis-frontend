@@ -1,7 +1,9 @@
 import Component from "@root/modules/core/ecs/Component";
-import { loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
-import { load } from "@root/modules/core/codeLoader/CodeLoader";
-import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
+import { load } from "@root/modules/core/loader/CodeLoader";
+import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
+import { instanciateWebpackAsyncModule } from "@root/modules/core/loader/WebpackLoader";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { world } from "@root/modules/core/ecs/WorldEntity";
 
 export class CodeLoaderComponent implements Component {
 
@@ -15,7 +17,7 @@ export class CodeLoaderComponent implements Component {
         });
     }
 
-    getName(): string {
+    getType(): string {
         return CodeLoaderComponent.name;
     }
 
@@ -27,25 +29,17 @@ export class CodeLoaderComponent implements Component {
         let promises: (() => Promise<any>)[] = [];
         for (const key in list) {
             const entry = list[key];
-            if (entry.type === "webpack-ecs-loader" && entry.module) {
-                promises.push(() => loadComponent(entry.module,entry.config));
+            if (entry.type === "ecs-component-loader" && entry.module) {
+                promises.push( () => new Promise(async (resolve, reject) => {
+                    let module = await instanciateWebpackAsyncModule<ComponentFactory<Component>>(entry.module,entry.name || "Factory");
+                    module.create(world, entry.config || {});
+                    resolve(module);
+                }));
             }
             if (entry.type === "assets-loader" && entry.url) {
                 promises.push(() => loadAssets(entry.url));
             }
         }
-
-        [
-            //() => import("@root/modules/scenes/demo1/GLTFScene"),
-            //() => import("@root/modules/core/controller/FpsController"),
-            //() => loadAssets("assets/static/demo2/level.glb"),
-            //() => loadAssets("assets/static/demo2/sky.jpg")
-            /*() => {
-                return new Promise(resolve => {
-                    setTimeout(resolve,1000);
-                })
-            }*/
-        ];
 
         let promise = load(promises, loadedCallBack);
         promise.then(value => {
@@ -53,6 +47,9 @@ export class CodeLoaderComponent implements Component {
                 this.initialLoadingResolver(value);
             }
         });
+        promise.catch(reason => {
+            console.error(reason);
+        })
         return promise;
     }
 

@@ -1,14 +1,18 @@
 import Component from '@root/modules/core/ecs/Component'
 import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
-import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
-export class Factory extends WebpackAsyncModuleFactory<LevelSetup>{
-    async create(config): Promise<LevelSetup> {
-        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
-        let ammo = await loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
+export class Factory implements WebpackLazyModule, ComponentFactory<LevelSetup>{
+    async create(world:WorldEntity, config:any): Promise<LevelSetup> {
+        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let module = new LevelSetup();
         await module.loadScene(ammo,three);
         return module;
@@ -21,7 +25,7 @@ export default class LevelSetup implements Component{
     private mesh: any;
     constructor(){    }
 
-    getName(): string {
+    getType(): string {
         return "LevelSetup";
     }
 

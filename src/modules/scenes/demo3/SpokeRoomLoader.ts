@@ -59,12 +59,16 @@ and get scene url from message from
 
  */
 
-import { connectToReticulum, load } from "@root/modules/PhoenixUtils";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { connectToReticulum, load } from "@root/modules/scenes/demo3/PhoenixUtils";
 import Component from "@root/modules/core/ecs/Component";
-import SceneLoader from "@root/modules/SceneLoader";
+import SceneLoader from "@root/modules/scenes/demo3/SceneLoader";
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
 export class SpokeRoomLoader implements Component {
 
@@ -78,16 +82,16 @@ export class SpokeRoomLoader implements Component {
         sceneLoader.loadScene(sceneURL,this.ammoPhysics,this.threeLib);
     }
 
-    getName(): string {
+    getType(): string {
         return SpokeRoomLoader.name;
     }
 }
 
-export class Factory extends WebpackAsyncModuleFactory<SpokeRoomLoader> {
-    async create(config): Promise<SpokeRoomLoader> {
-
-        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
-        let ammo = await loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
+export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoader> {
+    async create(world:WorldEntity, config:any): Promise<SpokeRoomLoader> {
+        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let spokeRoomLoader = new SpokeRoomLoader(ammo,three);
         await spokeRoomLoader.loadRoom("yUXD7A2");
         return spokeRoomLoader;

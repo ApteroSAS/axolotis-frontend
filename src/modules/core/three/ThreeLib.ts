@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import Component from "@root/modules/core/ecs/Component";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
-import { Input } from "@root/modules/controller/Input";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
 export class ThreeLib implements Component{
     renderer: THREE.WebGLRenderer;
@@ -41,14 +41,16 @@ export class ThreeLib implements Component{
     }
 
     //TODO rename to getType
-    getName(): string {
+    getType(): string {
         return ThreeLib.name;
     }
 }
 
-export class ThreeLibFactory extends WebpackAsyncModuleFactory<ThreeLib>{
-    async create(config): Promise<ThreeLib> {
-        let frameLoop = await loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
+export class ServiceFactory implements WebpackLazyModule, Service<ThreeLib>{
+    constructor() {}
+
+    async create(services:LazyServices): Promise<ThreeLib> {
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
         return new ThreeLib(frameLoop);
     }
 }

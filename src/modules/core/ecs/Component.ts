@@ -1,6 +1,6 @@
 
 export interface Component {
-    getName():string;
+    getType():string;
 }
 
 export default Component;

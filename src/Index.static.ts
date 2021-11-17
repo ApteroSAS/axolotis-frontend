@@ -1,5 +1,5 @@
 import { world } from "@root/modules/core/ecs/WorldEntity";
-import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import LevelSetup from "@root/modules/scenes/demo2/LevelSetup";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 import { FrameLoop } from "@root/modules/core/FrameLoop";

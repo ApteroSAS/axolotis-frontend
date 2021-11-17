@@ -1,10 +1,13 @@
 import Component from "@root/modules/core/ecs/Component";
-import { WebpackAsyncModuleFactory } from "@root/modules/core/assetsLoader/WebpackECSLoader";
-import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
 
-export class Factory extends WebpackAsyncModuleFactory<FrameLoop>{
-    async create(config): Promise<FrameLoop> {
-        let codeLoader = this.world.getFirstComponentByName<CodeLoaderComponent>(CodeLoaderComponent.name);
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
+import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
+import { world } from "@root/modules/core/ecs/WorldEntity";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+
+export class ServiceFactory implements WebpackLazyModule, Service<FrameLoop>{
+    async create(services:LazyServices): Promise<FrameLoop> {
+        let codeLoader = world.getFirstComponentByType<CodeLoaderComponent>(CodeLoaderComponent.name);
         let module = new FrameLoop();
         codeLoader.awaitInitialLoading().then(()=>{
             module.startLoop();
@@ -13,8 +16,7 @@ export class Factory extends WebpackAsyncModuleFactory<FrameLoop>{
     }
 }
 
-
-export class FrameLoop implements Component{
+export class FrameLoop implements Component {
     //TODO frame loop
     // setInterval Frameloop
     // animationFrame
@@ -44,7 +46,7 @@ export class FrameLoop implements Component{
         this.callbacks.push(callback);
     }
 
-    getName(): string {
+    getType(): string {
         return FrameLoop.name;
     }
 }

@@ -1,23 +1,28 @@
 import * as THREE from "three";
 import { Euler, Quaternion, Vector3 } from "three";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { Input } from "@root/modules/controller/Input";
 import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
 import { FrameLoop } from "@root/modules/core/FrameLoop";
 import Component from "@root/modules/core/ecs/Component";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
-export class Factory extends WebpackAsyncModuleFactory<PlayerControls>{
-    async create(config): Promise<PlayerControls> {
-        let three = loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
-        let ammo = loadComponent<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
-        let input = loadComponent<Input>("@root/modules/controller/Input");
-        let frameLoop = loadComponent<FrameLoop>("@root/modules/core/FrameLoop");
-        //let position = new THREE.Vector3(2.14, 1.48, -1.36);
-        let position = new THREE.Vector3((config.position && config.position.x) || 0,
+export class Factory implements WebpackLazyModule, ComponentFactory<PlayerControls>{
+    async create(world:WorldEntity, config:any): Promise<PlayerControls> {
+        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
+        let input = await services.getService<Input>("@root/modules/controller/Input");
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
+        let position = new THREE.Vector3(2.14, 1.48, -1.36);
+        //let position = new THREE.Vector3(0,5,0);
+        /*let position = new THREE.Vector3((config.position && config.position.x) || 0,
             (config.position && config.position.y) || 0,
-            (config.position && config.position.z) || 0);
+            (config.position && config.position.z) || 0);*/
         let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI * 0.5);
         let playerPhysics = new PlayerPhysics(await ammo);
         playerPhysics.Initialize(position.x, position.y, position.z);
@@ -56,7 +61,7 @@ export default class PlayerControls implements Component{
     private position: Vector3;
     private rotation: Quaternion;
 
-    getName(): string {
+    getType(): string {
         return PlayerControls.name;
     }
 

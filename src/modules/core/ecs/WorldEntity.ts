@@ -7,6 +7,7 @@ export class WorldEntity extends Entity{
 }
 
 export const world = new WorldEntity();//global presence
+
 if(window){
     // @ts-ignore
     window.world = world;

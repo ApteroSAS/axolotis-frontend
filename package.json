@@ -7,13 +7,14 @@
     "build": "webpack --config ./src/webpack.prod.js",
     "dev": "webpack serve --config ./src/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --config ./src/webpack.dev.js"
+    "start": "cross-env npm run pre-build && webpack serve --config ./src/webpack.dev.js"
   },
   "devDependencies": {
     "@types/ammo.js": "github:osman-turan/ammo.js-typings",
     "@types/three": "^0.132.0",
     "ammo.js": "kripken/ammo.js",
     "copy-webpack-plugin": "^9.0.1",
+    "cross-env": "^7.0.3",
     "html-webpack-plugin": "^5.4.0",
     "three": "^0.132.2",
     "ts-loader": "^9.2.5",

@@ -1,36 +1,34 @@
 import { world } from "@root/modules/core/ecs/WorldEntity";
-import { CodeLoaderComponent } from "@root/modules/core/codeLoader/CodeLoaderComponent";
-import PlayerControls from "@root/modules/controller/physicPlayerControl/PlayerControls";
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
 export const BUILD_VERSION = require('../package.json').version;
 console.log(BUILD_VERSION);
 //level file.json list the entity of the system
 
+world.addComponent(new ServiceEntity());
+
 const list = [
+    {
+        type: "ecs-component-loader",
+        module: "@root/modules/scenes/demo2/Sky2",
+    },
+    {
+        type: "ecs-component-loader",
+        module: "@root/modules/scenes/demo2/LevelSetup",
+    },
     /*{
-        type: "webpack-ecs-loader",
-        module: "LevelSetup",
-        config: {}
+        type: "ecs-component-loader",
+        module: "@root/modules/SpokeRoomLoader",
     },*/
     {
-        type: "webpack-ecs-loader",
-        module: "@root/modules/scenes/demo2/Sky2",
-        config: {}
-    },
-    {
-        type: "webpack-ecs-loader",
+        type: "ecs-component-loader",
         module: "@root/modules/controller/physicPlayerControl/PlayerControls",
-        config: {
-            position:{
-                x:0,y:5,z:0
-            }
-        }
     },
-    {
-        type: "webpack-ecs-loader",
+    /*{
+        type: "ecs-component-loader",
         module: "@root/modules/SpokeRoomLoader",
-        config: {}
-    },
+    },*/
     {
         type: "assets-loader",
         url: "assets/static/demo2/level.glb"
@@ -48,4 +46,3 @@ codeLoaderComponent.startLoading(list,(progress, total) => {
     console.log("loading complete");
     (document.getElementById("progresscontainer") as any).className += "load";
 });
-

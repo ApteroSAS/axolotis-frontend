@@ -1,10 +1,11 @@
+
 console.log("start generating code");
 //Parse the ts file find the class that extends WebpackModuleLoader and generate the file axolotis-frontend\src\generated\webpack\module
 const ts = require("typescript");
 var fs = require('fs');
 var path = require('path');
 
-let webpackInterfaceName = "WebpackAsyncModuleFactory";
+let webpackInterfaceName = ["WebpackAsyncModuleFactory","WebpackLazyModule"];
 var walk = function(dir, done) {
     var results = [];
     fs.readdir(dir, function(err, list) {
@@ -37,8 +38,10 @@ function doesClassImplementInterface(
     }
     for(const hc of cd.heritageClauses) {
         //console.log("heritage clause: " + hc.getText())
-        if(hc.getText().indexOf(webpackInterfaceName)!==-1){
-            return true;
+        for (const string of webpackInterfaceName) {
+            if(hc.getText().indexOf(string)!==-1){
+                return true;
+            }
         }
     }
 }
@@ -60,7 +63,7 @@ function generateWebpackModules(
         );
     }
 
-    let list = [];
+    let dict = {};
     // Visit every sourceFile in the program
     for (const sourceFile of program.getSourceFiles()) {
         if (!sourceFile.isDeclarationFile) {
@@ -75,8 +78,12 @@ function generateWebpackModules(
                     let symbol = checker.getSymbolAtLocation(node.name);
                     if (symbol) {
                         if (doesClassImplementInterface(checker, node,)) {
-                            let newPath = process.cwd().replaceAll("\\","/")+"/src";
-                            list.push("@root"+sourceFile.fileName.replace(newPath,"").replace(".ts",""))
+                            let cwd = process.cwd();
+                            console.log(cwd)
+                            cwd = cwd.replace(/\\/g, '/');
+                            let newPath = cwd+"/src";
+                            let module = "@root"+sourceFile.fileName.replace(newPath,"").replace(".ts","");
+                            dict[module] = module;
                         }
                     }
                 }else if (ts.isModuleDeclaration(node)) {
@@ -88,7 +95,7 @@ function generateWebpackModules(
     }
 
     let imortsLines = "";
-    for (const importLine of list){
+    for (const importLine in dict){
         imortsLines+="\n            case \""+importLine+"\": return import(\""+importLine+"\");"
     }
 

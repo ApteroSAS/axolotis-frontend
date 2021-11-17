@@ -1,12 +1,16 @@
 import * as THREE from 'three';
 import Component from '@root/modules/core/ecs/Component'
-import { loadAssets } from "@root/modules/core/assetsLoader/AssetsLoader";
-import { WebpackAsyncModuleFactory, loadComponent } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
-export class Factory extends WebpackAsyncModuleFactory<Sky>{
-    async create(config): Promise<Sky> {
-        let three = await loadComponent<ThreeLib>("@root/modules/core/three/ThreeLib");
+export class Factory implements WebpackLazyModule, ComponentFactory<Sky>{
+    async create(world:WorldEntity, config:any): Promise<Sky> {
+        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
         let sky = new Sky();
         await sky.initialize(three);
         return sky;
@@ -19,7 +23,7 @@ export default class Sky implements Component{
     constructor(){
     }
 
-    getName(): string {
+    getType(): string {
         return "Sky";
     }
 

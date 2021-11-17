@@ -1,5 +1,7 @@
-import { WebpackAsyncModuleFactory } from "@root/modules/core/assetsLoader/WebpackECSLoader";
+
 import Component from "@root/modules/core/ecs/Component";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
 export class Input implements Component{
     private _keyMap: {};
@@ -12,7 +14,7 @@ export class Input implements Component{
         this.AddKeyUpListner(this._onKeyUp);
     }
 
-    getName(): string {
+    getType(): string {
         return Input.name;
     }
 
@@ -68,8 +70,8 @@ export class Input implements Component{
     }
 }
 
-export class Factory extends WebpackAsyncModuleFactory<Input>{
-    async create(config): Promise<Input> {
+export class ServiceFactory implements WebpackLazyModule, Service<Input>{
+    async create(services:LazyServices): Promise<Input> {
         return new Input();
     }
 }
