@@ -21,8 +21,8 @@ export class AmmoPhysics implements Component{
         const solver = new Ammo.btSequentialImpulseConstraintSolver();
         this.physicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
         this.physicsWorld.setGravity( new Ammo.btVector3( 0.0, -9.81, 0.0 ) );
-        const fp = Ammo.addFunction(this.physicsUpdate);
-        this.physicsWorld.setInternalTickCallback(fp);
+        //const fp = Ammo.addFunction(this.physicsUpdate);
+        //this.physicsWorld.setInternalTickCallback(fp);
         this.physicsWorld.getBroadphase().getOverlappingPairCache().setInternalGhostPairCallback(new Ammo.btGhostPairCallback());
 
         //Physics debug drawer

@@ -1,8 +1,7 @@
-import * as _Ammo from "ammo.js/builds/ammo"
+import * as _Ammo from "ammo.js/builds/ammo.wasm"
 import * as THREE from 'three'
 import {ConvexHull} from 'three/examples/jsm/math/ConvexHull'
 var config = {
-    locateFile: () => 'ammo.js/builds/ammo.wasm.wasm'//TODO how to use ammo wasm
 }
 
 let Ammo:any = null;
