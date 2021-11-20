@@ -8,7 +8,7 @@ import Sky from "@root/modules/scenes/demo2/Sky2";
 import PlayerControls from "@root/modules/controller/physicPlayerControl/PlayerControls";
 import * as THREE from "three";
 import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
-import { Input } from "@root/modules/controller/Input";
+import { Input } from "@root/modules/controller/physicPlayerControl/Input";
 
 export const BUILD_VERSION = require('../package.json').version;
 console.log(BUILD_VERSION);

@@ -59,9 +59,9 @@ and get scene url from message from
 
  */
 
-import { connectToReticulum, load } from "@root/modules/scenes/demo3/PhoenixUtils";
+import { connectToReticulum, load } from "@root/modules/spoke/PhoenixUtils";
 import Component from "@root/modules/core/ecs/Component";
-import SceneLoader from "@root/modules/scenes/demo3/SceneLoader";
+import SceneLoader from "@root/modules/spoke/SceneLoader";
 import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
 import { ThreeLib } from "@root/modules/core/three/ThreeLib";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
@@ -69,17 +69,19 @@ import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
+import NavMeshPlayer from "@root/modules/controller/pathFindingPlayer/NavMeshPlayer";
 
 export class SpokeRoomLoader implements Component {
+    public sceneLoader: SceneLoader | null = null;
 
-    constructor(private ammoPhysics:AmmoPhysics,private threeLib:ThreeLib) {
+    constructor(private threeLib:ThreeLib) {
     }
 
     async loadRoom(hubid){
         const { data, hubPhxChannel, vapiddata } = await load(hubid);
         const sceneURL = data.hubs[0].scene.model_url.replace(".bin",".glb");
-        let sceneLoader = new SceneLoader();
-        await sceneLoader.loadScene(sceneURL,this.ammoPhysics,this.threeLib);
+        this.sceneLoader = new SceneLoader();
+        await this.sceneLoader.loadScene(sceneURL,this.threeLib);
     }
 
     getType(): string {
@@ -91,9 +93,12 @@ export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoa
     async create(world:WorldEntity, config:any): Promise<SpokeRoomLoader> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
-        let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
-        let spokeRoomLoader = new SpokeRoomLoader(ammo,three);
+        let spokeRoomLoader = new SpokeRoomLoader(three);
+        let navMeshPlayer = await world.getFirstComponentByTypeAsync<NavMeshPlayer>(NavMeshPlayer.name);
         await spokeRoomLoader.loadRoom(config.room);
+        if(spokeRoomLoader.sceneLoader) {
+            navMeshPlayer.loadNavMeshZone(spokeRoomLoader.sceneLoader.navMesh);
+        }
         return spokeRoomLoader;
     }
 }

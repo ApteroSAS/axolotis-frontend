@@ -4,8 +4,10 @@
         /* Webpack use module name for loading and computing code bundle and split chunk so we cannot introduce variable in the import thus we create this redirecting file*/
         switch (name) {
             
-            case "@root/modules/controller/Input": return import("@root/modules/controller/Input");
-            case "@root/modules/controller/OrbitController": return import("@root/modules/controller/OrbitController");
+            case "@root/modules/controller/cameraController/OrbitController": return import("@root/modules/controller/cameraController/OrbitController");
+            case "@root/modules/controller/pathFindingPlayer/Input": return import("@root/modules/controller/pathFindingPlayer/Input");
+            case "@root/modules/controller/pathFindingPlayer/NavMeshPlayer": return import("@root/modules/controller/pathFindingPlayer/NavMeshPlayer");
+            case "@root/modules/controller/physicPlayerControl/Input": return import("@root/modules/controller/physicPlayerControl/Input");
             case "@root/modules/controller/physicPlayerControl/PlayerControls": return import("@root/modules/controller/physicPlayerControl/PlayerControls");
             case "@root/modules/core/ammo/AmmoPhysics": return import("@root/modules/core/ammo/AmmoPhysics");
             case "@root/modules/core/FrameLoop": return import("@root/modules/core/FrameLoop");

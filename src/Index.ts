@@ -27,10 +27,10 @@ const list = [
     },
     {
         type: "ecs-component-loader",
-        module: "@root/modules/controller/physicPlayerControl/PlayerControls",
+        module: "@root/modules/controller/pathFindingPlayer/NavMeshPlayer",
         config: {
             position:{
-                x:0,y:5,z:0,
+                x:0,y:1,z:0,
                 //:x:2.14, y:1.48, z:-1.36
             }
         }
@@ -39,10 +39,10 @@ const list = [
         type: "ecs-component-loader",
         module: "@root/modules/SpokeRoomLoader",
     },*/
-    {
+    /*{
         type: "assets-loader",
         url: "assets/static/demo2/level.glb"
-    }
+    }*/
 ];
 
 const codeLoaderComponent = new CodeLoaderComponent();

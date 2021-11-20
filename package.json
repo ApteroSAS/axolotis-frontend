@@ -28,6 +28,7 @@
     "ammo-debug-drawer": "^1.0.1",
     "phoenix": "^1.6.2",
     "three-ammo": "github:ApteroSAS/three-ammo",
+    "three-pathfinding": "^0.15.0",
     "three-to-ammo": "^1.0.0",
     "tsutils": "^3.21.0"
   }

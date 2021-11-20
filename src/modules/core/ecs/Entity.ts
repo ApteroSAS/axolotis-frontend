@@ -3,12 +3,22 @@ import {Component} from "./Component";
 
 export class Entity implements Component {
     private components: Component[] = [];
+    private waitingForComponent:{ [id: string]: any[] } = {};
 
     constructor(private name: string) {
     }
 
     public addComponent<T extends Component>(component: T):T {
         this.components.push(component);
+
+        //part for async getComponent
+        if(this.waitingForComponent[component.getType()]){
+            for (const elem of this.waitingForComponent[component.getType()]) {
+                elem(component);
+            }
+            delete this.waitingForComponent[component.getType()];
+        }
+
         return component;
     }
 
@@ -67,9 +77,21 @@ export class Entity implements Component {
         return this.getComponentByType(n)[0] as T;
     }
 
+    public async getFirstComponentByTypeAsync<T extends Component>(n:string):Promise<T>{
+        if(this.getComponentByType(n)[0]){
+            return this.getComponentByType(n)[0] as T;
+        }else{
+            if(!this.waitingForComponent[n]){
+                this.waitingForComponent[n] = [];
+            }
+            let promise = new Promise<T>((resolve, reject) => {
+                this.waitingForComponent[n].push(resolve);//will resolve later
+            });
+            return promise;
+        }
+    }
 
-
-     public getType(): string {
+    public getType(): string {
         return this.name;
     }
 

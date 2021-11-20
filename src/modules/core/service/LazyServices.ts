@@ -12,6 +12,10 @@ export class LazyServices {
         return path+":"+classname;
     }
 
+   /* async getServiceFromModue<T>(modulePromise:Promise<any>, classname:string = "ServiceFactory"):Promise<any>{
+
+    }*/
+
     async getService<T>(path:string, classname:string = "ServiceFactory"):Promise<T>{
         if(this.service[this.toId(path, classname)]){
             const module = await this.service[this.toId(path, classname)];
