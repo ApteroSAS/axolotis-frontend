@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
-        index: path.join(__dirname, "Index.ts")
+        index: path.join(__dirname, "page/Index.ts")
     },
     experiments:{
         asyncWebAssembly:true,
@@ -39,7 +39,7 @@ module.exports = {
     plugins: [
         new HTMLWebpackPlugin({
             filename: "index.html",
-            template: path.join(__dirname, "index.html"),
+            template: path.join(__dirname, "page/index.html"),
             chunks: ["index"],
             chunksSortMode: "manual",
             minify: {
@@ -49,6 +49,11 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {from: "src/assets/static/", to: "assets/static/" }
+            ]
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {from: "src/assets/favicon.ico", to: "favicon.ico" }
             ]
         }),
         new CopyWebpackPlugin({

@@ -3,7 +3,7 @@ import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderCompone
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { PhysicsSystem } from "@root/modules/core/ammo/worker/physicsSystem";
 
-export const BUILD_VERSION = require('../package.json').version;
+export const BUILD_VERSION = require('../../package.json').version;
 console.log(BUILD_VERSION);
 //level file.json list the entity of the system
 

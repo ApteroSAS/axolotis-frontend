@@ -10,7 +10,7 @@ import * as THREE from "three";
 import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
 import { Input } from "@root/modules/controller/physicPlayerControl/Input";
 
-export const BUILD_VERSION = require('../package.json').version;
+export const BUILD_VERSION = require('../../package.json').version;
 console.log(BUILD_VERSION);
 //level file.json list the entity of the system
 
