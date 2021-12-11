@@ -4,10 +4,10 @@
   "description": "",
   "scripts": {
     "pre-build": "node ./generator/generate-webpack-module.js",
-    "build": "webpack --config ./src/webpack.prod.js",
-    "dev": "webpack serve --config ./src/webpack.dev.js",
+    "build": "webpack --config ./src/webpack/webpack.prod.js",
+    "dev": "webpack serve --config ./src/webpack/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env npm run pre-build && webpack serve --config ./src/webpack.dev.js"
+    "start": "cross-env npm run pre-build && webpack serve --config ./src/webpack/webpack.dev.js"
   },
   "devDependencies": {
     "@types/ammo.js": "github:osman-turan/ammo.js-typings",

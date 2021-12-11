@@ -1,5 +1,5 @@
-import {Ammo} from "@root/modules/core/ammo/AmmoLib";
-import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import {Ammo} from "@root/modules/ammo/AmmoLib";
+import { AmmoPhysics } from "@root/modules/ammo/AmmoPhysics";
 
 const CF_KINEMATIC_OBJECT = 2;
 const DISABLE_DEACTIVATION = 4;

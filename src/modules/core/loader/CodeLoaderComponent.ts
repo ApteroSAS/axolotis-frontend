@@ -17,6 +17,27 @@ export class CodeLoaderComponent implements Component {
         });
     }
 
+    async searchRoomDefinitionFile(){
+        //how to find a room
+        //1 - search in window.axolotis.room
+        //2 - search in meta tag
+        if((window as any).axolotis && (window as any).axolotis.room){
+            return (window as any).axolotis.room;
+        }
+        for(const tag of window.document.head.children){
+            if(tag.tagName === "META" && (tag as any).name==="axolotis:room"){
+                let roomUrl =  (tag as any).content;
+                roomUrl.replace("./","");
+                if(!roomUrl.startsWith("http")){
+                    roomUrl = window.location.origin+ "/" + roomUrl;
+                }
+                let response = await fetch(roomUrl);
+                return await response.json();
+            }
+        }
+        throw new Error("No room definition found in meta axolotis:room");
+    }
+
     getType(): string {
         return CodeLoaderComponent.name;
     }

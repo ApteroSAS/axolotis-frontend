@@ -1,8 +1,8 @@
 import Component from '@root/modules/core/ecs/Component'
-import {Ammo, createConvexHullShape} from "@root/modules/core/ammo/AmmoLib"
-import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import {Ammo, createConvexHullShape} from "@root/modules/ammo/AmmoLib"
+import { AmmoPhysics } from "@root/modules/ammo/AmmoPhysics";
 import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";

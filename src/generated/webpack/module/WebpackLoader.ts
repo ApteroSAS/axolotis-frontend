@@ -9,9 +9,9 @@
             case "@root/modules/controller/pathFindingPlayer/NavMeshPlayer": return import("@root/modules/controller/pathFindingPlayer/NavMeshPlayer");
             case "@root/modules/controller/physicPlayerControl/Input": return import("@root/modules/controller/physicPlayerControl/Input");
             case "@root/modules/controller/physicPlayerControl/PlayerControls": return import("@root/modules/controller/physicPlayerControl/PlayerControls");
-            case "@root/modules/core/ammo/AmmoPhysics": return import("@root/modules/core/ammo/AmmoPhysics");
-            case "@root/modules/core/FrameLoop": return import("@root/modules/core/FrameLoop");
-            case "@root/modules/core/three/ThreeLib": return import("@root/modules/core/three/ThreeLib");
+            case "@root/modules/core/ammo/AmmoPhysics": return import("@root/modules/ammo/AmmoPhysics");
+            case "@root/modules/core/FrameLoop": return import("@root/modules/FrameLoop");
+            case "@root/modules/core/three/ThreeLib": return import("@root/modules/three/ThreeLib");
             case "@root/modules/scenes/demo1/GLTFScene": return import("@root/modules/scenes/demo1/GLTFScene");
             case "@root/modules/scenes/demo2/LevelSetup": return import("@root/modules/scenes/demo2/LevelSetup");
             case "@root/modules/scenes/demo2/Sky2": return import("@root/modules/scenes/demo2/Sky2");

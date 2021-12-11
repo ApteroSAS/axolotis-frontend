@@ -1,6 +1,6 @@
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FrameLoop } from "@root/modules/core/FrameLoop";
+import { FrameLoop } from "@root/modules/FrameLoop";
 import Component from "@root/modules/core/ecs/Component";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";

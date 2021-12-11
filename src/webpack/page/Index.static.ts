@@ -1,16 +1,16 @@
 import { world } from "@root/modules/core/ecs/WorldEntity";
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import LevelSetup from "@root/modules/scenes/demo2/LevelSetup";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
-import { FrameLoop } from "@root/modules/core/FrameLoop";
-import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
+import { FrameLoop } from "@root/modules/FrameLoop";
+import { AmmoPhysics } from "@root/modules/ammo/AmmoPhysics";
 import Sky from "@root/modules/scenes/demo2/Sky2";
 import PlayerControls from "@root/modules/controller/physicPlayerControl/PlayerControls";
 import * as THREE from "three";
 import PlayerPhysics from "@root/modules/controller/physicPlayerControl/PlayerPhysics";
 import { Input } from "@root/modules/controller/physicPlayerControl/Input";
 
-export const BUILD_VERSION = require('../../package.json').version;
+export const BUILD_VERSION = require('../../../package.json').version;
 console.log(BUILD_VERSION);
 //level file.json list the entity of the system
 

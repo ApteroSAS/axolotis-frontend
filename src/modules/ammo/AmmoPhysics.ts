@@ -1,6 +1,6 @@
 import {Ammo, AmmoHelper} from "./AmmoLib";
 import Component from "@root/modules/core/ecs/Component";
-import { FrameLoop } from "@root/modules/core/FrameLoop";
+import { FrameLoop } from "@root/modules/FrameLoop";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 

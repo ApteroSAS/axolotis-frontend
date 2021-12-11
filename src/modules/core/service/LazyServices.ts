@@ -1,5 +1,5 @@
 import { instanciateWebpackAsyncModule } from "@root/modules/core/loader/WebpackLoader";
-import { ServiceFactory } from "@root/modules/core/FrameLoop";
+import { ServiceFactory } from "@root/modules/FrameLoop";
 
 export interface Service<T>{
     create(services:LazyServices):Promise<T>;

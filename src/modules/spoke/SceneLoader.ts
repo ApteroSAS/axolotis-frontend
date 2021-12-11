@@ -1,5 +1,5 @@
 import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 
 export default class SceneLoader {
     private scene: any;

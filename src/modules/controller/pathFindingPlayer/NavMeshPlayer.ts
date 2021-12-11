@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { Euler, Quaternion, Vector3 } from "three";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import { Input } from "@root/modules/controller/physicPlayerControl/Input";
-import { FrameLoop } from "@root/modules/core/FrameLoop";
+import { FrameLoop } from "@root/modules/FrameLoop";
 import Component from "@root/modules/core/ecs/Component";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";

@@ -62,8 +62,8 @@ and get scene url from message from
 import { connectToReticulum, load } from "@root/modules/spoke/PhoenixUtils";
 import Component from "@root/modules/core/ecs/Component";
 import SceneLoader from "@root/modules/spoke/SceneLoader";
-import { AmmoPhysics } from "@root/modules/core/ammo/AmmoPhysics";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { AmmoPhysics } from "@root/modules/ammo/AmmoPhysics";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";

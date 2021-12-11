@@ -4,7 +4,8 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
-        index: path.join(__dirname, "page/Index.ts")
+        index: path.join(__dirname, "page/Index.ts"),
+        room: path.join(__dirname, "page/Room.ts")
     },
     experiments:{
         asyncWebAssembly:true,
@@ -31,7 +32,7 @@ module.exports = {
     },
     output: {
         filename: "assets/js/[name]-[chunkhash].js",
-        path: path.resolve(__dirname, "../dist/")
+        path: path.resolve(__dirname, "../../dist/")
     },
     optimization: {
         minimize:true,
@@ -41,6 +42,15 @@ module.exports = {
             filename: "index.html",
             template: path.join(__dirname, "page/index.html"),
             chunks: ["index"],
+            chunksSortMode: "manual",
+            minify: {
+                removeComments: true
+            }
+        }),
+        new HTMLWebpackPlugin({
+            filename: "room.html",
+            template: path.join(__dirname, "page/room.html"),
+            chunks: ["room"],
             chunksSortMode: "manual",
             minify: {
                 removeComments: true

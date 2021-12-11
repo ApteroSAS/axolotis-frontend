@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RoughnessMipmapper } from "three/examples/jsm/utils/RoughnessMipmapper.js";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import Component from "@root/modules/core/ecs/Component";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";

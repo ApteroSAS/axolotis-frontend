@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Component from '@root/modules/core/ecs/Component'
 import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
-import { ThreeLib } from "@root/modules/core/three/ThreeLib";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
