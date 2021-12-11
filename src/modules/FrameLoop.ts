@@ -5,7 +5,7 @@ import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 import { world } from "@root/modules/core/ecs/WorldEntity";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 
-export class ServiceFactory implements WebpackLazyModule, Service<FrameLoop>{
+export class Factory implements WebpackLazyModule, Service<FrameLoop>{
     async create(services:LazyServices): Promise<FrameLoop> {
         let codeLoader = world.getFirstComponentByType<CodeLoaderComponent>(CodeLoaderComponent.name);
         let module = new FrameLoop();

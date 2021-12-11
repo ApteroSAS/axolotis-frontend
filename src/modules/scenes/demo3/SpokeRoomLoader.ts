@@ -92,7 +92,7 @@ export class SpokeRoomLoader implements Component {
 export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoader> {
     async create(world:WorldEntity, config:any): Promise<SpokeRoomLoader> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let spokeRoomLoader = new SpokeRoomLoader(three);
         let navMeshPlayer = await world.getFirstComponentByTypeAsync<NavMeshPlayer>(NavMeshPlayer.name);
         await spokeRoomLoader.loadRoom(config.room);

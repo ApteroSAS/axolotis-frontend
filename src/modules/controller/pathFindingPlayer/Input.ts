@@ -70,7 +70,7 @@ export class Input implements Component{
     }
 }
 
-export class ServiceFactory implements WebpackLazyModule, Service<Input>{
+export class Factory implements WebpackLazyModule, Service<Input>{
     async create(services:LazyServices): Promise<Input> {
         return new Input();
     }

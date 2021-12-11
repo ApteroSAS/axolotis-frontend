@@ -46,11 +46,11 @@ export class ThreeLib implements Component{
     }
 }
 
-export class ServiceFactory implements WebpackLazyModule, Service<ThreeLib>{
+export class Factory implements WebpackLazyModule, Service<ThreeLib>{
     constructor() {}
 
     async create(services:LazyServices): Promise<ThreeLib> {
-        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         return new ThreeLib(frameLoop);
     }
 }

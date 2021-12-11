@@ -11,7 +11,7 @@ import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 export class Factory implements WebpackLazyModule, ComponentFactory<LevelSetup>{
     async create(world:WorldEntity, config:any): Promise<LevelSetup> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let module = new LevelSetup();
         await module.loadScene(ammo,three);

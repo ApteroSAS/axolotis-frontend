@@ -10,7 +10,7 @@ import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 export class Factory implements WebpackLazyModule, ComponentFactory<Sky>{
     async create(world:WorldEntity, config:any): Promise<Sky> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let sky = new Sky();
         await sky.initialize(three);
         return sky;

@@ -13,9 +13,9 @@ import { NavMeshPathfinder } from "@root/modules/controller/pathFindingPlayer/Na
 export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlayer> {
     async create(world: WorldEntity, config: any): Promise<NavMeshPlayer> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let input = await services.getService<Input>("@root/modules/controller/pathFindingPlayer/Input");
-        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         //let position = new THREE.Vector3(2.14, 1.48, -1.36);
         //let position = new THREE.Vector3(0,5,0);
         let position = new THREE.Vector3((config.position && config.position.x) || 0,

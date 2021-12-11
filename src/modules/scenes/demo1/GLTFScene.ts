@@ -8,9 +8,9 @@ import Component from "@root/modules/core/ecs/Component";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
-export class ServiceFactory implements WebpackLazyModule, Service<GLTFScene>{
+export class Factory implements WebpackLazyModule, Service<GLTFScene>{
     async create(services:LazyServices): Promise<GLTFScene> {
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let module = new GLTFScene(three);
         return module;
     }

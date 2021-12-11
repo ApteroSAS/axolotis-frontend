@@ -10,6 +10,7 @@ module.exports = {
     experiments:{
         asyncWebAssembly:true,
     },
+    devtool: "source-map",
     module: {
         rules: [
             {

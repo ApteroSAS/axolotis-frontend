@@ -46,9 +46,9 @@ export class AmmoPhysics implements Component{
   }
 }
 
-export class ServiceFactory implements WebpackLazyModule, Service<AmmoPhysics>{
+export class Factory implements WebpackLazyModule, Service<AmmoPhysics>{
   async create(services:LazyServices): Promise<AmmoPhysics> {
-    let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
+    let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
     const ammo = new AmmoPhysics();
     await ammo.setupPhysics();
     (await frameLoop).addCallback((delta)=>{

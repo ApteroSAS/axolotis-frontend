@@ -1,5 +1,5 @@
 import { instanciateWebpackAsyncModule } from "@root/modules/core/loader/WebpackLoader";
-import { ServiceFactory } from "@root/modules/FrameLoop";
+import { Factory } from "@root/modules/FrameLoop";
 
 export interface Service<T>{
     create(services:LazyServices):Promise<T>;
@@ -12,11 +12,11 @@ export class LazyServices {
         return path+":"+classname;
     }
 
-   /* async getServiceFromModue<T>(modulePromise:Promise<any>, classname:string = "ServiceFactory"):Promise<any>{
+   /* async getServiceFromModue<T>(modulePromise:Promise<any>, classname:string = "Factory"):Promise<any>{
 
     }*/
 
-    async getService<T>(path:string, classname:string = "ServiceFactory"):Promise<T>{
+    async getService<T>(path:string, classname:string = "Factory"):Promise<T>{
         if(this.service[this.toId(path, classname)]){
             const module = await this.service[this.toId(path, classname)];
             if(!module){

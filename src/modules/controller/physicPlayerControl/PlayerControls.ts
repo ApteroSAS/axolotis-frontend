@@ -14,10 +14,10 @@ import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 export class Factory implements WebpackLazyModule, ComponentFactory<PlayerControls>{
     async create(world:WorldEntity, config:any): Promise<PlayerControls> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let ammo = await services.getService<AmmoPhysics>("@root/modules/core/ammo/AmmoPhysics");
         let input = await services.getService<Input>("@root/modules/controller/Input");
-        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         //let position = new THREE.Vector3(2.14, 1.48, -1.36);
         //let position = new THREE.Vector3(0,5,0);
         let position = new THREE.Vector3((config.position && config.position.x) || 0,

@@ -5,10 +5,10 @@ import Component from "@root/modules/core/ecs/Component";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
-export class ServiceFactory implements WebpackLazyModule, Service<OrbitController>{
+export class Factory implements WebpackLazyModule, Service<OrbitController>{
     async create(services:LazyServices): Promise<OrbitController> {
-        let frameLoop = await services.getService<FrameLoop>("@root/modules/core/FrameLoop");
-        let three = await services.getService<ThreeLib>("@root/modules/core/three/ThreeLib");
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let module = new OrbitController(three,frameLoop);
         return module;
     }
