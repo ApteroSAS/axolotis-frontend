@@ -2,7 +2,7 @@ import { world } from "@root/modules/core/ecs/WorldEntity";
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
-export const BUILD_VERSION = require('../../../package.json').version;
+export const BUILD_VERSION = require('../../../../package.json').version;
 console.log(BUILD_VERSION);
 
 export function init() {
