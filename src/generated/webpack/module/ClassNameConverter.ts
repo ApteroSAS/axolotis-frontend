@@ -20,6 +20,9 @@
     } else if (path === "@root/modules/controller/physicPlayerControl/PlayerControls" && classname === "Factory") {
         let module = await import("@root/modules/controller/physicPlayerControl/PlayerControls");
         return module.Factory.name;
+    } else if (path === "@root/modules/core/WorldService" && classname === "Factory") {
+        let module = await import("@root/modules/core/WorldService");
+        return module.Factory.name;
     } else if (path === "@root/modules/FrameLoop" && classname === "Factory") {
         let module = await import("@root/modules/FrameLoop");
         return module.Factory.name;

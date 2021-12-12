@@ -49,43 +49,43 @@ export class Entity implements Component {
         return this.components;
     }
 
-    public getComponentByType(n:string):Component[]{
+    public getComponentByType(type:string):Component[]{
         let ret:Component[] = [];
         this.components.forEach(comp => {
-            if( comp.getType() === n ){
+            if( comp.getType() === type ){
                 ret.push(comp);
             }
         });
         return ret;
     }
 
-    public getComponentByTypeStartsWith(n:string):Component[]{
+    public getComponentByTypeStartsWith(type:string):Component[]{
         let ret:Component[] = [];
         this.components.forEach(comp => {
-            if( comp.getType().startsWith(n) ){
+            if( comp.getType().startsWith(type) ){
                 ret.push(comp);
             }
         });
         return ret;
     }
 
-    public getFirstComponentByTypeStartsWith<T extends Component>(n:string):T{
-        return this.getComponentByTypeStartsWith(n)[0] as T;
+    public getFirstComponentByTypeStartsWith<T extends Component>(type:string):T{
+        return this.getComponentByTypeStartsWith(type)[0] as T;
     }
 
-    public getFirstComponentByType<T extends Component>(n:string):T{
-        return this.getComponentByType(n)[0] as T;
+    public getFirstComponentByType<T extends Component>(type:string):T{
+        return this.getComponentByType(type)[0] as T;
     }
 
-    public async getFirstComponentByTypeAsync<T extends Component>(n:string):Promise<T>{
-        if(this.getComponentByType(n)[0]){
-            return this.getComponentByType(n)[0] as T;
+    public async getFirstComponentByTypeAsync<T extends Component>(type:string):Promise<T>{
+        if(this.getComponentByType(type)[0]){
+            return this.getComponentByType(type)[0] as T;
         }else{
-            if(!this.waitingForComponent[n]){
-                this.waitingForComponent[n] = [];
+            if(!this.waitingForComponent[type]){
+                this.waitingForComponent[type] = [];
             }
             let promise = new Promise<T>((resolve, reject) => {
-                this.waitingForComponent[n].push(resolve);//will resolve later
+                this.waitingForComponent[type].push(resolve);//will resolve later
             });
             return promise;
         }

@@ -3,6 +3,7 @@ import Component from "@root/modules/core/ecs/Component";
 import { FrameLoop } from "@root/modules/FrameLoop";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
+import { WorldService } from "@root/modules/core/WorldService";
 
 declare let window:any;
 export function getGlobalRenderer(){
@@ -30,7 +31,7 @@ export class ThreeLib implements Component{
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     preRenderPass:(()=>void)[] = [];
-    constructor(frameLoop:FrameLoop) {
+    constructor(frameLoop:FrameLoop,worldService:WorldService) {
         this.scene = new THREE.Scene();
 
         this.renderer = getGlobalRenderer();
@@ -55,8 +56,15 @@ export class ThreeLib implements Component{
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             render()
         };
-        window.addEventListener('resize', onWindowResize, false);
-        frameLoop.addCallback(render);
+
+        worldService.addOnWorldChangeCallback(() => {
+            window.removeEventListener('resize', onWindowResize);
+            frameLoop.removeCallback(render);
+            if(worldService.isActiveWorld()) {
+                window.addEventListener('resize', onWindowResize, false);
+                frameLoop.addCallback(render);
+            }
+        },true);
     }
 
     //TODO rename to getType
@@ -70,7 +78,8 @@ export class Factory implements WebpackLazyModule, Service<ThreeLib>{
 
     async create(services:LazyServices): Promise<ThreeLib> {
         let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
-        return new ThreeLib(frameLoop);
+        let worldService = await services.getService<WorldService>("@root/modules/core/WorldService");
+        return new ThreeLib(frameLoop,worldService);
     }
 }
 

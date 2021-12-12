@@ -10,6 +10,7 @@
             case "@root/modules/controller/pathFindingPlayer/NavMeshPlayer": return import("@root/modules/controller/pathFindingPlayer/NavMeshPlayer");
             case "@root/modules/controller/physicPlayerControl/Input": return import("@root/modules/controller/physicPlayerControl/Input");
             case "@root/modules/controller/physicPlayerControl/PlayerControls": return import("@root/modules/controller/physicPlayerControl/PlayerControls");
+            case "@root/modules/core/WorldService": return import("@root/modules/core/WorldService");
             case "@root/modules/FrameLoop": return import("@root/modules/FrameLoop");
             case "@root/modules/portals/PortalLink": return import("@root/modules/portals/PortalLink");
             case "@root/modules/portals/PortalsService": return import("@root/modules/portals/PortalsService");

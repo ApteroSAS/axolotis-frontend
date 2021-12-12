@@ -41,6 +41,12 @@ export class FrameLoop implements Component {
         requestAnimationFrame(animate);
     }
 
+    removeCallback(callback:(delta:number)=>void){
+        this.callbacks = this.callbacks.filter(value => {
+            return value != callback;
+        })
+    }
+
     addCallback(callback:(delta:number)=>void){
         this.callbacks.push(callback);
     }

@@ -3,7 +3,7 @@ import { load } from "@root/modules/core/loader/CodeLoader";
 import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
 import { instanciateWebpackAsyncModule } from "@root/modules/core/loader/WebpackLoader";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
-import { world } from "@root/modules/core/ecs/WorldEntity";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 
 export class CodeLoaderComponent implements Component {
 
@@ -17,6 +17,15 @@ export class CodeLoaderComponent implements Component {
         });
     }
 
+    async loadRoomDefinitionFile(roomUrl){
+        roomUrl.replace("./","");
+        if(!roomUrl.startsWith("http")){
+            roomUrl = window.location.origin+ "/" + roomUrl;
+        }
+        let response = await fetch(roomUrl);
+        return await response.json();
+    }
+
     async searchRoomDefinitionFile(){
         //how to find a room
         //1 - search in window.axolotis.room
@@ -27,12 +36,7 @@ export class CodeLoaderComponent implements Component {
         for(const tag of window.document.head.children){
             if(tag.tagName === "META" && (tag as any).name==="axolotis:room"){
                 let roomUrl =  (tag as any).content;
-                roomUrl.replace("./","");
-                if(!roomUrl.startsWith("http")){
-                    roomUrl = window.location.origin+ "/" + roomUrl;
-                }
-                let response = await fetch(roomUrl);
-                return await response.json();
+                return this.loadRoomDefinitionFile(roomUrl);
             }
         }
         throw new Error("No room definition found in meta axolotis:room");
@@ -46,7 +50,7 @@ export class CodeLoaderComponent implements Component {
         await this.initialLoading;
     }
 
-    async startLoading(list:any[],loadedCallBack: (progress: number, total: number) => void) {
+    async startLoading(world: WorldEntity,list:any[],loadedCallBack: (progress: number, total: number) => void) {
         let promises: (() => Promise<any>)[] = [];
         for (const key in list) {
             const entry = list[key];
