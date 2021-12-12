@@ -6,8 +6,8 @@ import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { ThreeLib } from "@root/modules/three/ThreeLib";
 import * as THREE from "three";
 import { FrameLoop } from "@root/modules/FrameLoop";
-import * as CameraUtils from "three/examples/jsm/utils/CameraUtils";
 import { PortalsService } from "@root/modules/portals/PortalsService";
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 
 //https://barthaweb.com/2020/09/webgl-portal/
 //https://github.com/stemkoski/AR-Examples/blob/master/portal-view.html
@@ -16,16 +16,22 @@ import { PortalsService } from "@root/modules/portals/PortalsService";
 
 
 export class Factory implements WebpackLazyModule, ComponentFactory<PortalLink> {
-    async create(world: WorldEntity, config: any): Promise<PortalLink> {
+    async create(world: WorldEntity, config: {url:string}): Promise<PortalLink> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         let service = await services.getService<PortalsService>("@root/modules/portals/PortalsService");
-        return new PortalLink(service,three,frameLoop,{
-            position:new THREE.Vector3(3,1,2)
+        let portalLink = new PortalLink(service,three,frameLoop,{
+            position:new THREE.Vector3(1,2,3)
         },{
-            position:new THREE.Vector3(-3,0,2)
+            position:new THREE.Vector3(1,2,3)
         });
+        codeLoader.awaitInitialLoading().then(async value => {
+            let world = await service.loadNewUrl(config.url);
+            portalLink.setTargetWorld(world);
+        });
+        return portalLink;
     }
 }
 
@@ -33,6 +39,17 @@ export class PortalLink implements Component{
     private otherCamera: THREE.PerspectiveCamera;
     private portalA: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
     private portalB: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
+    private targetWorld: WorldEntity | null = null;
+    private targetThreeLib: ThreeLib | null = null;
+
+    async setTargetWorld(world: WorldEntity) {
+        this.targetWorld = world;
+        let targetWorldService = await this.targetWorld.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        this.targetThreeLib = await targetWorldService.getService<ThreeLib>("@root/modules/three/ThreeLib");
+        this.three.preRenderPass.push(() => {
+            this.renderPortal();
+        })
+    }
 
     constructor(portals:PortalsService,private three: ThreeLib, private frameLoop: FrameLoop,
                 a:{position:THREE.Vector3,rotation?:THREE.Euler},
@@ -82,13 +99,13 @@ export class PortalLink implements Component{
         this.portalB.layers.set(31);//set mesh invisible
         three.scene.add(this.portalB);
 
-        this.three.preRenderPass.push(() => {
-            this.renderPortal();
-        })
     }
 
     renderPortal()
     {
+        if(!this.targetThreeLib){
+            return;
+        }
         // relatively align other camera with main camera
 
         let relativePosition = this.portalA.worldToLocal( this.three.camera.position.clone() );
@@ -129,6 +146,7 @@ export class PortalLink implements Component{
         gl.depthMask(false);
 
         this.three.renderer.render( this.three.scene, this.three.camera );
+        //this.three.renderer.render( this.targetThreeLib.scene, this.targetThreeLib.camera );
 
         // SECOND PASS
         // goal: draw from the portal camera perspective (which is aligned relative to the second portal)
@@ -157,7 +175,8 @@ export class PortalLink implements Component{
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
         this.otherCamera.layers.set(0);
-        this.three.renderer.render( this.three.scene, this.otherCamera );//TODO maybe here scene 2
+        //this.three.renderer.render( this.three.scene, this.otherCamera );//TODO maybe here scene 2
+        this.three.renderer.render( this.targetThreeLib.scene, this.otherCamera );
 
         // disable clipping planes
         this.three.renderer.clippingPlanes = [];

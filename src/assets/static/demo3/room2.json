@@ -15,7 +15,7 @@
       "type": "ecs-component-loader",
       "module": "@root/modules/portals/PortalLink",
       "config": {
-        "room": "yUXD7A2"
+        "url": "assets/static/demo3/room.json"
       }
     },
     {

@@ -9,6 +9,7 @@ export class CodeLoaderComponent implements Component {
 
     private initialLoading: Promise<any>;
     private initialLoadingResolver: ((value: any) => void) | undefined;
+    public roomUrl: string = "";
 
 
     constructor() {
@@ -17,11 +18,17 @@ export class CodeLoaderComponent implements Component {
         });
     }
 
-    async loadRoomDefinitionFile(roomUrl){
+    cleanUpRoomUrl(roomUrl:string){
         roomUrl.replace("./","");
         if(!roomUrl.startsWith("http")){
             roomUrl = window.location.origin+ "/" + roomUrl;
         }
+        return roomUrl;
+    }
+
+    async loadRoomDefinitionFile(roomUrl:string){
+        roomUrl = this.cleanUpRoomUrl(roomUrl);
+        this.roomUrl = roomUrl;
         let response = await fetch(roomUrl);
         return await response.json();
     }
