@@ -13,6 +13,13 @@
     },
     {
       "type": "ecs-component-loader",
+      "module": "@root/modules/portals/PortalLink",
+      "config": {
+        "room": "tm5Dxeo"
+      }
+    },
+    {
+      "type": "ecs-component-loader",
       "module": "@root/modules/controller/pathFindingPlayer/NavMeshPlayer",
       "config": {
         "position": {

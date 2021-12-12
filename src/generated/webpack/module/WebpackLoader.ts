@@ -11,6 +11,8 @@
             case "@root/modules/controller/physicPlayerControl/Input": return import("@root/modules/controller/physicPlayerControl/Input");
             case "@root/modules/controller/physicPlayerControl/PlayerControls": return import("@root/modules/controller/physicPlayerControl/PlayerControls");
             case "@root/modules/FrameLoop": return import("@root/modules/FrameLoop");
+            case "@root/modules/portals/PortalLink": return import("@root/modules/portals/PortalLink");
+            case "@root/modules/portals/PortalsService": return import("@root/modules/portals/PortalsService");
             case "@root/modules/scenes/demo1/GLTFScene": return import("@root/modules/scenes/demo1/GLTFScene");
             case "@root/modules/scenes/demo2/LevelSetup": return import("@root/modules/scenes/demo2/LevelSetup");
             case "@root/modules/scenes/demo2/Sky2": return import("@root/modules/scenes/demo2/Sky2");

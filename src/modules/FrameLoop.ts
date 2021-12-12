@@ -2,16 +2,15 @@ import Component from "@root/modules/core/ecs/Component";
 
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
-import { world } from "@root/modules/core/ecs/WorldEntity";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 
 export class Factory implements WebpackLazyModule, Service<FrameLoop>{
     async create(services:LazyServices): Promise<FrameLoop> {
-        let codeLoader = world.getFirstComponentByType<CodeLoaderComponent>(CodeLoaderComponent.name);
+        let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let module = new FrameLoop();
         codeLoader.awaitInitialLoading().then(()=>{
             module.startLoop();
-        })
+        });
         return module;
     }
 }

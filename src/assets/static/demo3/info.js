@@ -1,0 +1,33 @@
+let tmp = {
+    "room": [
+    {
+        "type": "ecs-component-loader",
+        "module": "@root/modules/scenes/demo2/Sky2"
+    },
+    /*{
+      "type": "ecs-component-loader",
+      "module": "@root/modules/scenes/demo3/SpokeRoomLoader",
+      "config": {
+        "room": "yUXD7A2"
+      }
+    },*/
+    {
+        "type": "ecs-component-loader",
+        "module": "@root/modules/PortalLink",
+        "config": {
+            "room": "yUXD7A2"
+        }
+    },
+    {
+        "type": "ecs-component-loader",
+        "module": "@root/modules/controller/pathFindingPlayer/NavMeshPlayer",
+        "config": {
+            "position": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            }
+        }
+    }
+]
+}

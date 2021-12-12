@@ -6,11 +6,10 @@ export const BUILD_VERSION = require('../../../../package.json').version;
 console.log(BUILD_VERSION);
 
 export function init() {
-    world.addComponent(new ServiceEntity());
-
-    const codeLoaderComponent = new CodeLoaderComponent();
-    world.addComponent(codeLoaderComponent);
-
+    let serviceEntity = new ServiceEntity();
+    world.addComponent(serviceEntity);
+    let codeLoaderComponent = new CodeLoaderComponent();
+    serviceEntity.setService("@root/modules/core/loader/CodeLoaderService",codeLoaderComponent);
     codeLoaderComponent.searchRoomDefinitionFile().then((json)=>{
         codeLoaderComponent.startLoading(json.room,(progress, total) => {
             console.log("["+progress + "/" + total + "]");

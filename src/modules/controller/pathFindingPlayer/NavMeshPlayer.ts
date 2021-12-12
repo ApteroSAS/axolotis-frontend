@@ -179,7 +179,7 @@ export default class NavMeshPlayer implements Component {
             this.navMesh.findPositionOnNavMesh(this.position, this.positionOutTmp, this.positionOutTmp2);
             this.positionOutTmp2.y = this.positionOutTmp2.y+this.yOffset;//player height
         } else {
-            this.position.copy(this.positionOutTmp);
+            this.positionOutTmp2.copy(this.positionOutTmp);
         }
 
         this.camera.position.set(this.positionOutTmp2.x, this.positionOutTmp2.y, this.positionOutTmp2.z);

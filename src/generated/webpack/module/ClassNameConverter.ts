@@ -23,6 +23,12 @@
     } else if (path === "@root/modules/FrameLoop" && classname === "Factory") {
         let module = await import("@root/modules/FrameLoop");
         return module.Factory.name;
+    } else if (path === "@root/modules/portals/PortalLink" && classname === "Factory") {
+        let module = await import("@root/modules/portals/PortalLink");
+        return module.Factory.name;
+    } else if (path === "@root/modules/portals/PortalsService" && classname === "Factory") {
+        let module = await import("@root/modules/portals/PortalsService");
+        return module.Factory.name;
     } else if (path === "@root/modules/scenes/demo1/GLTFScene" && classname === "Factory") {
         let module = await import("@root/modules/scenes/demo1/GLTFScene");
         return module.Factory.name;

@@ -4,30 +4,49 @@ import { FrameLoop } from "@root/modules/FrameLoop";
 import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
 import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 
+declare let window:any;
+export function getGlobalRenderer(){
+    if(!window.axolotis?.renderer) {
+        let renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        document.body.appendChild(renderer.domElement);
+        if (!window.axolotis) {
+            window.axolotis = {};
+        }
+        window.axolotis.renderer = renderer;
+    }
+    return window.axolotis.renderer;
+}
+
 export class ThreeLib implements Component{
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
+    preRenderPass:(()=>void)[] = [];
     constructor(frameLoop:FrameLoop) {
         this.scene = new THREE.Scene();
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1;
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-
-        document.body.appendChild( this.renderer.domElement);
+        this.renderer = getGlobalRenderer();
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000);
         this.camera.position.z = 2;
 
 
         const render = () =>{
-            this.renderer.render( this.scene,  this.camera)
+            for (const prerender of this.preRenderPass){
+                prerender();
+            }
+            // FINAL PASS
+            this.renderer.render( this.scene,  this.camera);
+            // set things back to normal
+            this.renderer.autoClear = true;
         };
 
         const onWindowResize = () => {
