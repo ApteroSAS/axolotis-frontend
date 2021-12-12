@@ -1,3 +1,46 @@
+import { load } from "@root/modules/spoke/PhoenixUtils";
+import Component from "@root/modules/core/ecs/Component";
+import SceneLoader from "@root/modules/spoke/SceneLoader";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
+import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
+import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
+import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
+import { PlayerService } from "@root/modules/controller/PlayerService";
+
+export class SpokeRoomLoader implements Component {
+    public sceneLoader: SceneLoader | null = null;
+
+    constructor(private threeLib:ThreeLib) {
+    }
+
+    async loadRoom(hubid){
+        const { data, hubPhxChannel, vapiddata } = await load(hubid);
+        const sceneURL = data.hubs[0].scene.model_url.replace(".bin",".glb");
+        this.sceneLoader = new SceneLoader();
+        await this.sceneLoader.loadScene(sceneURL,this.threeLib);
+    }
+
+    getType(): string {
+        return SpokeRoomLoader.name;
+    }
+}
+
+export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoader> {
+    async create(world:WorldEntity, config:any): Promise<SpokeRoomLoader> {
+        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
+        let playerService = await services.getService<PlayerService>("@root/modules/controller/PlayerService");
+        let spokeRoomLoader = new SpokeRoomLoader(three);
+        await spokeRoomLoader.loadRoom(config.room);
+        if(spokeRoomLoader.sceneLoader) {
+            playerService.declareNavMesh(spokeRoomLoader.sceneLoader.navMesh);
+        }
+        return spokeRoomLoader;
+    }
+}
+
+
 /*
 Have to connect to the phoenix websocket
 and get scene url from message from
@@ -58,47 +101,3 @@ and get scene url from message from
 }];
 
  */
-
-import { connectToReticulum, load } from "@root/modules/spoke/PhoenixUtils";
-import Component from "@root/modules/core/ecs/Component";
-import SceneLoader from "@root/modules/spoke/SceneLoader";
-import { AmmoPhysics } from "@root/modules/ammo/AmmoPhysics";
-import { ThreeLib } from "@root/modules/three/ThreeLib";
-import { WebpackLazyModule } from "@root/modules/core/loader/WebpackLoader";
-import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
-import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
-import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
-import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
-import NavMeshPlayer from "@root/modules/controller/pathFindingPlayer/NavMeshPlayer";
-
-export class SpokeRoomLoader implements Component {
-    public sceneLoader: SceneLoader | null = null;
-
-    constructor(private threeLib:ThreeLib) {
-    }
-
-    async loadRoom(hubid){
-        const { data, hubPhxChannel, vapiddata } = await load(hubid);
-        const sceneURL = data.hubs[0].scene.model_url.replace(".bin",".glb");
-        this.sceneLoader = new SceneLoader();
-        await this.sceneLoader.loadScene(sceneURL,this.threeLib);
-    }
-
-    getType(): string {
-        return SpokeRoomLoader.name;
-    }
-}
-
-export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoader> {
-    async create(world:WorldEntity, config:any): Promise<SpokeRoomLoader> {
-        let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
-        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
-        let spokeRoomLoader = new SpokeRoomLoader(three);
-        let navMeshPlayer = await world.getFirstComponentByTypeAsync<NavMeshPlayer>(NavMeshPlayer.name);
-        await spokeRoomLoader.loadRoom(config.room);
-        if(spokeRoomLoader.sceneLoader) {
-            navMeshPlayer.loadNavMeshZone(spokeRoomLoader.sceneLoader.navMesh);
-        }
-        return spokeRoomLoader;
-    }
-}

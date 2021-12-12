@@ -15,7 +15,10 @@
     "ammo.js": "kripken/ammo.js",
     "copy-webpack-plugin": "^9.1.0",
     "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "html-loader": "^3.0.1",
     "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
     "three": "^0.135.0",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.3",
@@ -26,6 +29,7 @@
   },
   "dependencies": {
     "ammo-debug-drawer": "^1.0.1",
+    "eventemitter3": "^4.0.7",
     "phoenix": "^1.6.4",
     "three-ammo": "github:ApteroSAS/three-ammo",
     "three-pathfinding": "^0.15.0",

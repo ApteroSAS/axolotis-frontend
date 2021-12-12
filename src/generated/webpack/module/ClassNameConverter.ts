@@ -20,8 +20,17 @@
     } else if (path === "@root/modules/controller/physicPlayerControl/PlayerControls" && classname === "Factory") {
         let module = await import("@root/modules/controller/physicPlayerControl/PlayerControls");
         return module.Factory.name;
+    } else if (path === "@root/modules/controller/PlayerService" && classname === "Factory") {
+        let module = await import("@root/modules/controller/PlayerService");
+        return module.Factory.name;
     } else if (path === "@root/modules/core/WorldService" && classname === "Factory") {
         let module = await import("@root/modules/core/WorldService");
+        return module.Factory.name;
+    } else if (path === "@root/modules/debug/DebugBtn" && classname === "Factory") {
+        let module = await import("@root/modules/debug/DebugBtn");
+        return module.Factory.name;
+    } else if (path === "@root/modules/debug/PerformanceStats" && classname === "Factory") {
+        let module = await import("@root/modules/debug/PerformanceStats");
         return module.Factory.name;
     } else if (path === "@root/modules/FrameLoop" && classname === "Factory") {
         let module = await import("@root/modules/FrameLoop");

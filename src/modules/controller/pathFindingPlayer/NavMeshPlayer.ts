@@ -9,12 +9,14 @@ import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { NavMeshPathfinder } from "@root/modules/controller/pathFindingPlayer/NavMeshPathfinder";
+import { EVT_NAVMESH, EVT_TELEPORT, PlayerService } from "@root/modules/controller/PlayerService";
 
 export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlayer> {
     async create(world: WorldEntity, config: any): Promise<NavMeshPlayer> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let input = await services.getService<Input>("@root/modules/controller/pathFindingPlayer/Input");
+        let playerService = await services.getService<PlayerService>("@root/modules/controller/PlayerService");
         let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         //let position = new THREE.Vector3(2.14, 1.48, -1.36);
         //let position = new THREE.Vector3(0,5,0);
@@ -22,7 +24,7 @@ export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlaye
             (config.position && config.position.y) || 0,
             (config.position && config.position.z) || 0);
         let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI * 0.5);
-        let playerControls = new NavMeshPlayer(position, rotation, await three, await input);
+        let playerControls = new NavMeshPlayer(position, rotation, await three, await input,playerService);
         playerControls.Initialize();
         (await frameLoop).addCallback((delta) => {
             playerControls.Update(delta);
@@ -66,7 +68,7 @@ export default class NavMeshPlayer implements Component {
         this.navMesh.loadMesh(mesh, NAV_ZONE);
     }
 
-    constructor(position, rotation, three: ThreeLib, private input: Input) {
+    constructor(position, rotation, three: ThreeLib, private input: Input, private playerService: PlayerService) {
         this.position = position;
         this.rotation = rotation;
         this.navMesh = new NavMeshPathfinder();
@@ -94,6 +96,13 @@ export default class NavMeshPlayer implements Component {
         this.xAxis = new THREE.Vector3(1.0, 0.0, 0.0);
         this.yAxis = new THREE.Vector3(0.0, 1.0, 0.0);
         this.velocity = new THREE.Vector3();
+
+        playerService.getEvents().on(EVT_NAVMESH,navmesh => {
+            this.loadNavMeshZone(navmesh);
+        });
+        playerService.getEvents().on(EVT_TELEPORT,vector => {
+            this.position.copy(vector);
+        });
     }
 
     Initialize() {

@@ -18,7 +18,7 @@ declare let window:any;
 
 let activeWorld=-1;
 let worlds:WorldEntity[] = [];
-let callbacks:(()=>void)[] = [];
+let callbacks:(()=>void)[] = [];//do not use events emitter here to avoid surcharing dependencies in the code modules
 
 export function registerNewWorld(worldEntity:WorldEntity){
     worlds.push(worldEntity);

@@ -1,6 +1,7 @@
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { DebugBtn } from "@root/modules/debug/DebugBtn";
 
 export const BUILD_VERSION = require('../../../../package.json').version;
 console.log(BUILD_VERSION);
@@ -17,6 +18,8 @@ export function init2() {
         }).then(()=>{
             console.log("[init 2] : ok");
         });
+        //debug
+        let service = serviceEntity.getService<DebugBtn>("@root/modules/debug/DebugBtn");
     });
 }
 
