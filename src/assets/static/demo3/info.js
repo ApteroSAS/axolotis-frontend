@@ -8,7 +8,7 @@ let tmp = {
       "type": "ecs-component-loader",
       "module": "@root/modules/scenes/demo3/SpokeRoomLoader",
       "config": {
-        "room": "yUXD7A2"
+        "room": "yUXD7A2"/tm5Dxeo
       }
     },*/
     {

@@ -17,7 +17,7 @@ export class Factory implements WebpackLazyModule, Service<OrbitController>{
 export class OrbitController implements Component{
     constructor(three:ThreeLib,frameLoop:FrameLoop) {
         const controls = new OrbitControls( three.camera,  three.renderer.domElement);
-        frameLoop.addCallback(()=>{
+        frameLoop.addLoop(OrbitController.name,()=>{
             controls.update();
         })
 

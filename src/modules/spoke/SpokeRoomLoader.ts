@@ -7,6 +7,8 @@ import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { PlayerService } from "@root/modules/controller/PlayerService";
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
+import { DebugBtn } from "@root/modules/debug/DebugBtn";
 
 export class SpokeRoomLoader implements Component {
     public sceneLoader: SceneLoader | null = null;
@@ -34,7 +36,7 @@ export class Factory implements WebpackLazyModule, ComponentFactory<SpokeRoomLoa
         let spokeRoomLoader = new SpokeRoomLoader(three);
         await spokeRoomLoader.loadRoom(config.room);
         if(spokeRoomLoader.sceneLoader) {
-            playerService.declareNavMesh(spokeRoomLoader.sceneLoader.navMesh);
+            playerService.getCurrentPlayer().declareNavMesh(spokeRoomLoader.sceneLoader.navMesh);
         }
         return spokeRoomLoader;
     }

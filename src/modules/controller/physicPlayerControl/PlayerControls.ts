@@ -28,7 +28,7 @@ export class Factory implements WebpackLazyModule, ComponentFactory<PlayerContro
         playerPhysics.Initialize(position.x, position.y, position.z);
         let playerControls = new PlayerControls(playerPhysics,position,rotation,await three,await input);
         playerControls.Initialize();
-        (await frameLoop).addCallback((delta)=>{
+        (await frameLoop).addLoop(PlayerControls.name,(delta)=>{
             playerControls.Update(delta);
             playerPhysics.PhysicsUpdate();
         })

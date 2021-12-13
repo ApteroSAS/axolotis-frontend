@@ -33,11 +33,14 @@ export class DebugBtn implements Component {
             elementById.onclick = (evt) => {
                 evt.stopPropagation();
                 evt.preventDefault();
-                let service = serviceEntity.getService<PerformanceStats>("@root/modules/debug/PerformanceStats");
+                serviceEntity.getService<PerformanceStats>("@root/modules/debug/PerformanceStats");
             };
-            frameLoop.addCallback(delta => {
+            frameLoop.addLoop(DebugBtn.name, delta => {
                 (elementById as any).innerText = Math.round((1.0/delta)*1000)+" FPS";
             })
+        }
+        if(window.location.host.startsWith("localhost")){
+            serviceEntity.getService<PerformanceStats>("@root/modules/debug/PerformanceStats");
         }
     }
 

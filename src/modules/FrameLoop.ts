@@ -9,7 +9,7 @@ export class Factory implements WebpackLazyModule, Service<FrameLoop>{
         let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let module = new FrameLoop();
         codeLoader.awaitInitialLoading().then(()=>{
-            module.startLoop();
+            module.startAnimationFrameLoop();
         });
         return module;
     }
@@ -24,34 +24,51 @@ export class FrameLoop implements Component {
     // worker loop?
     // stats for all those loop (stats.js)
     // API to add task consumer?
-    callbacks:((delta:number)=>void)[] = [];
+    //callbacks:((delta:number)=>void)[] = [];
+    loops:{[id:string]:((delta:number)=>void)} = {};
     private prevTime: number = 0;
+    private monitoringStart: (name) => void= ()=>{};
+    private monitoringEnd:(name)=>void = ()=>{};
     constructor() {
     }
 
-    startLoop(){
+    startAnimationFrameLoop(){
         const animate = (t) => {
+            this.monitoringStart(FrameLoop.name);
             const delta = ( t - this.prevTime );
             this.prevTime = t;
             requestAnimationFrame(animate);
-            for (const callback of this.callbacks) {
-                callback(delta);
+            for (const callback in this.loops) {
+                this.monitoringStart(callback);
+                this.loops[callback](delta);
+                this.monitoringEnd(callback);
             }
+            this.monitoringEnd(FrameLoop.name);
         };
         requestAnimationFrame(animate);
     }
 
-    removeCallback(callback:(delta:number)=>void){
-        this.callbacks = this.callbacks.filter(value => {
-            return value != callback;
-        })
+    setMonitoringCallback(start:(name)=>void,end:(name)=>void){
+        this.monitoringStart = start;
+        this.monitoringEnd = end;
     }
 
-    addCallback(callback:(delta:number)=>void){
-        this.callbacks.push(callback);
+    removeLoop(loopName: string) {
+        delete this.loops[loopName];
+        this.monitoringStart(loopName);//set this loop to 0 fix
+        this.monitoringEnd(loopName);
+    }
+
+    addLoop(loopName:string,iterationCallback:(delta:number)=>void){
+        if(this.loops[loopName]){
+            throw new Error();
+        }
+        this.loops[loopName] = iterationCallback;
     }
 
     getType(): string {
         return FrameLoop.name;
     }
+
+
 }

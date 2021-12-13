@@ -9,7 +9,7 @@ import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { NavMeshPathfinder } from "@root/modules/controller/pathFindingPlayer/NavMeshPathfinder";
-import { EVT_NAVMESH, EVT_TELEPORT, PlayerService } from "@root/modules/controller/PlayerService";
+import { Player, PlayerService } from "@root/modules/controller/PlayerService";
 
 export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlayer> {
     async create(world: WorldEntity, config: any): Promise<NavMeshPlayer> {
@@ -25,8 +25,9 @@ export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlaye
             (config.position && config.position.z) || 0);
         let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI * 0.5);
         let playerControls = new NavMeshPlayer(position, rotation, await three, await input,playerService);
+        playerService.declarePlayer(playerControls);
         playerControls.Initialize();
-        (await frameLoop).addCallback((delta) => {
+        (await frameLoop).addLoop(NavMeshPlayer.name,(delta) => {
             playerControls.Update(delta);
         });
         return playerControls;
@@ -35,7 +36,7 @@ export class Factory implements WebpackLazyModule, ComponentFactory<NavMeshPlaye
 
 const NAV_ZONE = "character";
 
-export default class NavMeshPlayer implements Component {
+export default class NavMeshPlayer implements Component,Player {
     private camera: any;
     private timeZeroToMax: number;
     private decceleration: number;
@@ -64,8 +65,19 @@ export default class NavMeshPlayer implements Component {
         return NavMeshPlayer.name;
     }
 
-    loadNavMeshZone(mesh: any) {
-        this.navMesh.loadMesh(mesh, NAV_ZONE);
+    askFlyMode() {
+    }
+
+    declareNavMesh(navMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>) {
+        this.navMesh.loadMesh(navMesh, NAV_ZONE);
+    }
+
+    teleportToLocation(x: number, y: number, z: number) {
+        this.position.copy(new THREE.Vector3(x,y,z));
+    }
+
+    getHeadPosition(targetCopy:THREE.Vector3): void {
+        targetCopy.copy(this.position);
     }
 
     constructor(position, rotation, three: ThreeLib, private input: Input, private playerService: PlayerService) {
@@ -97,12 +109,6 @@ export default class NavMeshPlayer implements Component {
         this.yAxis = new THREE.Vector3(0.0, 1.0, 0.0);
         this.velocity = new THREE.Vector3();
 
-        playerService.getEvents().on(EVT_NAVMESH,navmesh => {
-            this.loadNavMeshZone(navmesh);
-        });
-        playerService.getEvents().on(EVT_TELEPORT,vector => {
-            this.position.copy(vector);
-        });
     }
 
     Initialize() {
@@ -195,4 +201,5 @@ export default class NavMeshPlayer implements Component {
         this.position.copy(this.camera.position);
 
     }
+
 }

@@ -1,7 +1,6 @@
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
-import { DebugBtn } from "@root/modules/debug/DebugBtn";
 
 export const BUILD_VERSION = require('../../../../package.json').version;
 console.log(BUILD_VERSION);
@@ -20,9 +19,6 @@ export function init() {
         }).then(()=>{
             console.log("loading complete");
             (document.getElementById("progresscontainer") as any).className += "load";
-            setTimeout(()=>{
-                let service = serviceEntity.getService<DebugBtn>("@root/modules/debug/DebugBtn");
-            },3000);//avoid surcharging the start
         });
     });
 }

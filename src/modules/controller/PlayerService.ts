@@ -4,36 +4,41 @@ import Component from "@root/modules/core/ecs/Component";
 import * as EventEmitter from "eventemitter3";
 import * as THREE from "three";
 
-export class Factory implements WebpackLazyModule, Service<PlayerService>{
-    async create(services:LazyServices): Promise<PlayerService> {
+export class Factory implements WebpackLazyModule, Service<PlayerService> {
+    async create(services: LazyServices): Promise<PlayerService> {
         return new PlayerService();
     }
 }
 
-export const EVT_NAVMESH = "navmesh";
-export const EVT_TELEPORT = "teleport";
-export const EVT_FLY = "flymode";
+export interface Player {
+    declareNavMesh(navMesh: THREE.Mesh);
+    askFlyMode();
+    teleportToLocation(x: number, y: number, z: number);
+    getHeadPosition(targetCopy:THREE.Vector3): void;
+}
 
+/**
+ * Should be loosly coupled since multiple implementation of player will be behind that.
+ */
 export class PlayerService implements Component {
-    events = new EventEmitter();
-
-    getEvents(){
-        return this.events;
-    }
+    player: Player | null = null;
 
     getType(): string {
         return PlayerService.name;
     }
 
-    teleportToLocation(x:number,y:number,z:number){
-        this.events.emit(EVT_TELEPORT,new THREE.Vector3(x,y,z));
+    declarePlayer(player:Player){
+        if(this.player){
+            throw new Error();
+        }
+        this.player = player;
     }
 
-    declareNavMesh(navMesh: THREE.Mesh){
-        this.events.emit(EVT_NAVMESH,navMesh);
+    getCurrentPlayer():Player{
+        if(!this.player){
+            throw new Error();
+        }
+        return this.player;
     }
 
-    askFlyMode(){
-        this.events.emit(EVT_FLY,true);
-    }
 }

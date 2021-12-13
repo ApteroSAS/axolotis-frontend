@@ -36,7 +36,7 @@ export class ThreeLib implements Component{
 
         this.renderer = getGlobalRenderer();
 
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000);
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 100000);
         this.camera.position.z = 2;
 
 
@@ -59,10 +59,10 @@ export class ThreeLib implements Component{
 
         worldService.addOnWorldChangeCallback(() => {
             window.removeEventListener('resize', onWindowResize);
-            frameLoop.removeCallback(render);
+            frameLoop.removeLoop(ThreeLib.name);
             if(worldService.isActiveWorld()) {
                 window.addEventListener('resize', onWindowResize, false);
-                frameLoop.addCallback(render);
+                frameLoop.addLoop(ThreeLib.name,render);
             }
         },true);
     }

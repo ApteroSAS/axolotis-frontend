@@ -51,7 +51,7 @@ export class Factory implements WebpackLazyModule, Service<AmmoPhysics>{
     let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
     const ammo = new AmmoPhysics();
     await ammo.setupPhysics();
-    (await frameLoop).addCallback((delta)=>{
+    (await frameLoop).addLoop(AmmoPhysics.name,(delta)=>{
       ammo.step( delta*0.001);
     });
     return ammo;

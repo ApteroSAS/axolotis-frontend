@@ -4,6 +4,7 @@ import { loadAssets } from "@root/modules/core/loader/AssetsLoader";
 import { instanciateWebpackAsyncModule } from "@root/modules/core/loader/WebpackLoader";
 import { ComponentFactory } from "@root/modules/core/ecs/ComponentFactory";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
+import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 
 export class CodeLoaderComponent implements Component {
 
@@ -72,6 +73,10 @@ export class CodeLoaderComponent implements Component {
                     world.addComponent(component);
                     resolve(module);
                 }));
+            }
+            if (entry.type === "ecs-service-loader" && entry.module) {
+                let service = await world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
+                await service.getService<any>(entry.module);
             }
             if (entry.type === "assets-loader" && entry.url) {
                 promises.push(() => loadAssets(entry.url));

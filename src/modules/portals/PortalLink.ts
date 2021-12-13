@@ -8,6 +8,8 @@ import * as THREE from "three";
 import { FrameLoop } from "@root/modules/FrameLoop";
 import { PortalsService } from "@root/modules/portals/PortalsService";
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
+import { PlayerService } from "@root/modules/controller/PlayerService";
+import { WorldService } from "@root/modules/core/WorldService";
 
 //https://barthaweb.com/2020/09/webgl-portal/
 //https://github.com/stemkoski/AR-Examples/blob/master/portal-view.html
@@ -16,16 +18,18 @@ import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderCompone
 
 
 export class Factory implements WebpackLazyModule, ComponentFactory<PortalLink> {
-    async create(world: WorldEntity, config: {url:string}): Promise<PortalLink> {
+    async create(world: WorldEntity, config: {url:string,in:{x:number,y:number,z:number},out:{x:number,y:number,z:number}}): Promise<PortalLink> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
         let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         let service = await services.getService<PortalsService>("@root/modules/portals/PortalsService");
-        let portalLink = new PortalLink(service,three,frameLoop,{
-            position:new THREE.Vector3(1,2,3)
+        let playerService = await services.getService<PlayerService>("@root/modules/controller/PlayerService");
+        let worldService = await services.getService<WorldService>("@root/modules/core/WorldService");
+        let portalLink = new PortalLink(service,three,frameLoop,playerService,worldService,{
+            position:new THREE.Vector3(config.in?.x,config.in?.y,config.in?.z)
         },{
-            position:new THREE.Vector3(1,2,3)
+            position:new THREE.Vector3(config.out?.x,config.out?.y,config.out?.z)
         });
         codeLoader.awaitInitialLoading().then(async value => {
             let world = await service.loadNewUrl(config.url);
@@ -41,22 +45,31 @@ export class PortalLink implements Component{
     private portalB: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>;
     private targetWorld: WorldEntity | null = null;
     private targetThreeLib: ThreeLib | null = null;
+    private boundingBox: THREE.Box3;
+    private targetLink: PortalLink | null = null;
+    private portalPlane: THREE.Plane;
+    private targetPlayerService: PlayerService | null = null;
 
     async setTargetWorld(world: WorldEntity) {
         this.targetWorld = world;
         let targetWorldService = await this.targetWorld.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         this.targetThreeLib = await targetWorldService.getService<ThreeLib>("@root/modules/three/ThreeLib");
+        this.targetPlayerService = await targetWorldService.getService<PlayerService>("@root/modules/controller/PlayerService");
+        this.targetLink  = await world.getFirstComponentByType<PortalLink>(PortalLink.name);//TODO should find portal coresponding to portal B in other word.
         this.three.preRenderPass.push(() => {
             this.renderPortal();
-        })
+        });
+        this.frameLoop.addLoop(PortalLink.name,delta => {
+            this.computerPortalEnter();
+        });
     }
 
-    constructor(portals:PortalsService,private three: ThreeLib, private frameLoop: FrameLoop,
+    constructor(portals:PortalsService,private three: ThreeLib, private frameLoop: FrameLoop,private playerService:PlayerService,private worldService:WorldService,
                 a:{position:THREE.Vector3,rotation?:THREE.Euler},
                 b:{position:THREE.Vector3,rotation?:THREE.Euler}
                 ) {
 
-        this.otherCamera = new THREE.PerspectiveCamera( three.camera.fov, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.otherCamera = new THREE.PerspectiveCamera( three.camera.fov, window.innerWidth / window.innerHeight, this.three.camera.near, this.three.camera.far );
         three.scene.add(this.otherCamera);
 
         // Portal A (Portal View) ================================
@@ -77,8 +90,16 @@ export class PortalLink implements Component{
             this.portalA.setRotationFromEuler(a.rotation);
         }
         three.scene.add(this.portalA);
-
-
+        this.portalA.geometry.computeBoundingBox();
+        this.portalPlane = new THREE.Plane(new THREE.Vector3(0,0,1));//TODO remember to move and oriente the plan to follow the portal
+        //const helper = new THREE.PlaneHelper( this.portalPlane, 1, 0xffff00 );
+        //this.three.scene.add( helper );
+        this.boundingBox = new THREE.Box3();
+        this.boundingBox.copy( this.portalA.geometry.boundingBox|| new THREE.Box3() );
+        let minBox = new THREE.Box3(new THREE.Vector3(-0.2,-0.2,-0.2),new THREE.Vector3(0.2,0.2,0.2));
+        this.boundingBox= this.boundingBox.union(minBox);
+        //const helper = new THREE.Box3Helper( this.boundingBox,0xffff00 as any );
+        //this.three.scene.add( helper );
         // Portal B (Point of View position and rotation) ================================
         // material for portals and blockers
         let defaultMaterial2 = new THREE.MeshBasicMaterial({
@@ -99,6 +120,57 @@ export class PortalLink implements Component{
         this.portalB.layers.set(31);//set mesh invisible
         three.scene.add(this.portalB);
 
+    }
+
+    tmpPos:THREE.Vector3 = new THREE.Vector3();
+    tmpDir:THREE.Vector3 = new THREE.Vector3();
+    tmpBox:THREE.Box3 = new THREE.Box3();
+    tmpPlane:THREE.Plane = new THREE.Plane();
+    collidingLastFrame:boolean = false;
+    lastDistance:number = 0;
+    gracePeriode = 0;//in FPS
+
+    computerPortalEnter(){
+        if(!this.worldService.isActiveWorld()){
+            return;
+        }
+        if(this.gracePeriode>0){
+            this.gracePeriode--;
+        }
+        //compute collision
+        this.tmpBox.copy(this.boundingBox);
+        this.tmpPlane.copy(this.portalPlane);
+        this.tmpBox.applyMatrix4( this.portalA.matrixWorld );
+        this.tmpPlane.applyMatrix4( this.portalA.matrixWorld );
+        this.playerService.getCurrentPlayer().getHeadPosition(this.tmpPos);
+        this.three.camera.getWorldDirection(this.tmpDir);
+        //this.tmpPos.add(this.tmpDir.multiplyScalar(0.30));
+        const isColliding = this.tmpBox.containsPoint(this.tmpPos);
+        if (isColliding) {
+            if(this.lastDistance !== 0) {
+                // - * + => - / + * - => - => this means we traversed the plan
+                if(this.tmpPlane.distanceToPoint(this.tmpPos)*this.lastDistance<0){
+                    //enter
+                    console.log("enter")
+                    if(this.targetWorld && this.targetLink && this.targetPlayerService && this.gracePeriode==0) {
+                        this.targetLink.gracePeriode = 5;
+                        this.targetLink.collidingLastFrame = true;//sync colliding flag
+                        this.targetLink.lastDistance = this.lastDistance;
+                        this.playerService.getCurrentPlayer().getHeadPosition(this.tmpPos);//right head position before teleport
+                        this.targetPlayerService.getCurrentPlayer().teleportToLocation(this.tmpPos.x,this.tmpPos.y,this.tmpPos.z);
+                        console.log("teleport");
+                        this.worldService.setActiveWorld(this.targetWorld);
+                        this.targetPlayerService.getCurrentPlayer().teleportToLocation(this.tmpPos.x,this.tmpPos.y,this.tmpPos.z);
+                    }
+                }
+            }
+            this.lastDistance = this.tmpPlane.distanceToPoint(this.tmpPos);
+        } else if (!isColliding && this.lastDistance!==0) {
+            //leave
+            this.lastDistance = 0;
+            console.log("leave")
+        }
+        this.collidingLastFrame = isColliding;
     }
 
     renderPortal()

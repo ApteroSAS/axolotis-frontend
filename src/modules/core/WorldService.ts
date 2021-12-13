@@ -3,6 +3,7 @@ import { LazyServices, Service } from "@root/modules/core/service/LazyServices";
 import Component from "@root/modules/core/ecs/Component";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
+import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 
 export class Factory implements WebpackLazyModule, Service<WorldService>{
     constructor() {}
@@ -18,7 +19,8 @@ declare let window:any;
 
 let activeWorld=-1;
 let worlds:WorldEntity[] = [];
-let callbacks:(()=>void)[] = [];//do not use events emitter here to avoid surcharing dependencies in the code modules
+let addOnWorldChangeCallback:(()=>void)[] = [];//do not use events emitter here to avoid surcharing dependencies in the code modules
+let addOnWorldAddedCallback:(()=>void)[] = [];//do not use events emitter here to avoid surcharing dependencies in the code modules
 
 export function registerNewWorld(worldEntity:WorldEntity){
     worlds.push(worldEntity);
@@ -57,8 +59,16 @@ export class WorldService implements Component{
         }
         this.world = worldtmp;
 
+        //new world service is new world event
+        services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService").then(async codeLoader => {
+            codeLoader.awaitInitialLoading();
+            for(const callback of addOnWorldAddedCallback){
+                callback();
+            }
+        });
+
         if(activeWorld>=0){
-            this.setActiveWorld(activeWorld);
+            this.setActiveWorldByNumber(activeWorld);
         }
     }
 
@@ -79,20 +89,37 @@ export class WorldService implements Component{
     }
 
     addOnWorldChangeCallback(callback:()=>void,init:boolean = false){
-        callbacks.push(callback);
+        addOnWorldChangeCallback.push(callback);
         if(init){
             callback();
         }
     }
 
-    setActiveWorld(number){
+    addOnWorldAdded(callback:()=>void,init:boolean = false){
+        addOnWorldAddedCallback.push(callback);
+        if(init){
+            callback();
+        }
+    }
+
+    setActiveWorld(world:WorldEntity){
+        for (let i = 0; i < this.getWorlds().length; i++) {
+            if(world == this.getWorlds()[i]){
+                this.setActiveWorldByNumber(i);
+                return;
+            }
+        }
+        throw new Error();
+    }
+
+    setActiveWorldByNumber(number:number){
         if(activeWorld!=number) {
             activeWorld = number;
             if (window && window.axolotis) {
                 window.axolotis.activeWorld = activeWorld;
                 window.axolotis.world = worlds[activeWorld];
             }
-            for (const callback of callbacks){
+            for (const callback of addOnWorldChangeCallback){
                 callback();
             }
         }

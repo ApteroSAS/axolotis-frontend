@@ -50,8 +50,8 @@
     } else if (path === "@root/modules/scenes/demo2/Sky2" && classname === "Factory") {
         let module = await import("@root/modules/scenes/demo2/Sky2");
         return module.Factory.name;
-    } else if (path === "@root/modules/scenes/demo3/SpokeRoomLoader" && classname === "Factory") {
-        let module = await import("@root/modules/scenes/demo3/SpokeRoomLoader");
+    } else if (path === "@root/modules/spoke/SpokeRoomLoader" && classname === "Factory") {
+        let module = await import("@root/modules/spoke/SpokeRoomLoader");
         return module.Factory.name;
     } else if (path === "@root/modules/three/ThreeLib" && classname === "Factory") {
         let module = await import("@root/modules/three/ThreeLib");

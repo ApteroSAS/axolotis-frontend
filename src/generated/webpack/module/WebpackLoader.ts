@@ -20,7 +20,7 @@
             case "@root/modules/scenes/demo1/GLTFScene": return import("@root/modules/scenes/demo1/GLTFScene");
             case "@root/modules/scenes/demo2/LevelSetup": return import("@root/modules/scenes/demo2/LevelSetup");
             case "@root/modules/scenes/demo2/Sky2": return import("@root/modules/scenes/demo2/Sky2");
-            case "@root/modules/scenes/demo3/SpokeRoomLoader": return import("@root/modules/scenes/demo3/SpokeRoomLoader");
+            case "@root/modules/spoke/SpokeRoomLoader": return import("@root/modules/spoke/SpokeRoomLoader");
             case "@root/modules/three/ThreeLib": return import("@root/modules/three/ThreeLib");
                 default: throw new Error(name+" not found in module list - please run npm run pre-build");
             }
