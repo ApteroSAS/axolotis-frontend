@@ -5,6 +5,8 @@ import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { WorldEntity } from "@root/modules/core/ecs/WorldEntity";
 import { CodeLoaderComponent } from "@root/modules/core/loader/CodeLoaderComponent";
 import { WorldService } from "@root/modules/core/WorldService";
+import { FrameLoop } from "@root/modules/FrameLoop";
+import { ThreeLib } from "@root/modules/three/ThreeLib";
 
 export class Factory implements WebpackLazyModule, Service<PortalsService>{
     constructor() {}
@@ -13,7 +15,9 @@ export class Factory implements WebpackLazyModule, Service<PortalsService>{
         let worldService = await services.getService<WorldService>("@root/modules/core/WorldService");
         let actualWorldService = await worldService.getActiveWorld().getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let codeLoader = await actualWorldService.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
-        return new PortalsService(worldService,codeLoader.roomUrl);
+        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
+        let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
+        return new PortalsService(worldService,frameLoop,three,codeLoader.roomUrl);
     }
 }
 
@@ -21,8 +25,31 @@ let worlds = {};
 
 export class PortalsService implements Component{
 
-    constructor(private services: WorldService, roomUrl: string) {
+    constructor(private services: WorldService,frameLoop:FrameLoop,private three:ThreeLib, roomUrl: string) {
         this.notifyInitialWorld(roomUrl,services.getActiveWorld());
+        frameLoop.addLoop(PortalsService.name,delta => {
+            for(const loop of this.portalsLoops){
+                loop(delta);
+            }
+        })
+        this.three.preRenderPass.push(() => {
+            this.render();
+        });
+    }
+    i = 0;
+    render(){
+        let gl = this.three.renderer.getContext();
+        // clear buffers now: color, depth, stencil
+        this.three.renderer.clear(true,true,true);
+        // do not clear buffers before each render pass
+        this.three.renderer.autoClear = false;
+
+        for(const loop of this.portalsRenderLoops){
+            loop();
+        }
+
+        gl.colorMask(true,true,true,true);
+        gl.depthMask(true);
     }
 
     getType(): string {
@@ -58,4 +85,14 @@ export class PortalsService implements Component{
         });
     }
 
+    portalsLoops:((delta) => void)[] = [];
+    portalsRenderLoops:(() => void)[] = [];
+
+    addPortalLoop(callback: (delta) => void) {
+        this.portalsLoops.push(callback);
+    }
+
+    addPortalRenderLoop(callback: () => void) {
+        this.portalsRenderLoops.push(callback);
+    }
 }

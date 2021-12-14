@@ -10,6 +10,7 @@ import { DebugBtn } from "@root/modules/debug/DebugBtn";
 import { WorldService } from "@root/modules/core/WorldService";
 import { ServiceEntity } from "@root/modules/core/service/ServiceEntity";
 import { PortalLink } from "@root/modules/portals/PortalLink";
+import { PortalsService } from "@root/modules/portals/PortalsService";
 
 const rStats = require("./rStats/rStats");
 const rStatsExtra = require("./rStats/rStats.extras");
@@ -76,14 +77,14 @@ export class PerformanceStats implements Component {
             config.values[NavMeshPlayer.name.toLowerCase()+"-"+i] = { caption: NavMeshPlayer.name + " (ms)" };
             config.values[DebugBtn.name.toLowerCase()+"-"+i] = { caption: DebugBtn.name + " (ms)" };
             config.values[PerformanceStats.name.toLowerCase()+"-"+i] = { caption: PerformanceStats.name + " (ms)" };
-            config.values[PortalLink.name.toLowerCase()+"-"+i] = { caption: PortalLink.name + " (ms)" };
+            config.values[PortalsService.name.toLowerCase()+"-"+i] = { caption: PortalsService.name + " (ms)" };
             config.groups.push(
                 {
                     caption: "World - "+i, values: [
                         FrameLoop.name.toLowerCase()+"-"+i,
                         ThreeLib.name.toLowerCase()+"-"+i,
                         NavMeshPlayer.name.toLowerCase()+"-"+i,
-                        PortalLink.name.toLowerCase()+"-"+i]
+                        PortalsService.name.toLowerCase()+"-"+i]
                 })
         }
         this.rS = new rStats(config);

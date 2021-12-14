@@ -11,6 +11,15 @@ let tmp = {
         "room": "yUXD7A2"/tm5Dxeo
       }
     },*/
+        {
+            "type": "ecs-component-loader",
+            "module": "@root/modules/portals/PortalLink",
+            "config": {
+                "url": "assets/static/demo3/room2.json",
+                "in": {"x": 1, "y": 2, "z": 2},
+                "out": {"x": 1, "y": 2, "z": 2}
+            }
+        },
     {
         "type": "ecs-component-loader",
         "module": "@root/modules/PortalLink",

@@ -22,11 +22,10 @@ export class Factory implements WebpackLazyModule, ComponentFactory<PortalLink> 
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
-        let frameLoop = await services.getService<FrameLoop>("@root/modules/FrameLoop");
         let service = await services.getService<PortalsService>("@root/modules/portals/PortalsService");
         let playerService = await services.getService<PlayerService>("@root/modules/controller/PlayerService");
         let worldService = await services.getService<WorldService>("@root/modules/core/WorldService");
-        let portalLink = new PortalLink(service,three,frameLoop,playerService,worldService,{
+        let portalLink = new PortalLink(service,three,playerService,worldService,{
             position:new THREE.Vector3(config.in?.x,config.in?.y,config.in?.z)
         },{
             position:new THREE.Vector3(config.out?.x,config.out?.y,config.out?.z)
@@ -38,6 +37,10 @@ export class Factory implements WebpackLazyModule, ComponentFactory<PortalLink> 
         return portalLink;
     }
 }
+
+const invisibleLayer = 31;
+const tmpVisibleLayer = 30;
+const regularLayer = 0;
 
 export class PortalLink implements Component{
     private otherCamera: THREE.PerspectiveCamera;
@@ -56,15 +59,15 @@ export class PortalLink implements Component{
         this.targetThreeLib = await targetWorldService.getService<ThreeLib>("@root/modules/three/ThreeLib");
         this.targetPlayerService = await targetWorldService.getService<PlayerService>("@root/modules/controller/PlayerService");
         this.targetLink  = await world.getFirstComponentByType<PortalLink>(PortalLink.name);//TODO should find portal coresponding to portal B in other word.
-        this.three.preRenderPass.push(() => {
+        this.portals.addPortalRenderLoop(()=>{
             this.renderPortal();
         });
-        this.frameLoop.addLoop(PortalLink.name,delta => {
+        this.portals.addPortalLoop(delta => {
             this.computerPortalEnter();
         });
     }
 
-    constructor(portals:PortalsService,private three: ThreeLib, private frameLoop: FrameLoop,private playerService:PlayerService,private worldService:WorldService,
+    constructor(private portals:PortalsService,private three: ThreeLib,private playerService:PlayerService,private worldService:WorldService,
                 a:{position:THREE.Vector3,rotation?:THREE.Euler},
                 b:{position:THREE.Vector3,rotation?:THREE.Euler}
                 ) {
@@ -89,6 +92,7 @@ export class PortalLink implements Component{
         if(a.rotation) {
             this.portalA.setRotationFromEuler(a.rotation);
         }
+        this.portalA.layers.set(invisibleLayer);//invisible layer storage
         three.scene.add(this.portalA);
         this.portalA.geometry.computeBoundingBox();
         this.portalPlane = new THREE.Plane(new THREE.Vector3(0,0,1));//TODO remember to move and oriente the plan to follow the portal
@@ -112,12 +116,11 @@ export class PortalLink implements Component{
             new THREE.CircleGeometry(1, 64),
             defaultMaterial2.clone()
         );
-        this.portalB.material.opacity = 0.5;
+        this.portalB.material.opacity = 0;
         this.portalB.position.copy(b.position);
         if(b.rotation) {
             this.portalB.setRotationFromEuler(b.rotation);
         }
-        this.portalB.layers.set(31);//set mesh invisible
         three.scene.add(this.portalB);
 
     }
@@ -178,6 +181,8 @@ export class PortalLink implements Component{
         if(!this.targetThreeLib){
             return;
         }
+        this.portalA.layers.set(tmpVisibleLayer);//Portal to render to layer 1
+
         // relatively align other camera with main camera
 
         let relativePosition = this.portalA.worldToLocal( this.three.camera.position.clone() );
@@ -190,15 +195,6 @@ export class PortalLink implements Component{
         this.otherCamera.rotation.x = this.three.camera.rotation.x;
 
         let gl = this.three.renderer.getContext();
-        //skyMesh2.layers.set(0)
-        this.portalA.layers.set(1);//Portal to render to layer 1
-
-
-        // clear buffers now: color, depth, stencil
-        this.three.renderer.clear(true,true,true);
-        // do not clear buffers before each render pass
-        this.three.renderer.autoClear = false;
-
 
         // FIRST PASS
         // goal: using the stencil buffer, place 1's in position of first portal
@@ -207,7 +203,7 @@ export class PortalLink implements Component{
         gl.enable(gl.STENCIL_TEST);
 
         // layer 1 contains only the first portal
-        this.three.camera.layers.set(1);
+        this.three.camera.layers.set(tmpVisibleLayer);
 
         gl.stencilFunc(gl.ALWAYS, 1, 0xff);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
@@ -246,7 +242,7 @@ export class PortalLink implements Component{
         gl.stencilFunc(gl.EQUAL, 1, 0xff);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
-        this.otherCamera.layers.set(0);
+        this.otherCamera.layers.set(regularLayer);
         //this.three.renderer.render( this.three.scene, this.otherCamera );//TODO maybe here scene 2
         this.three.renderer.render( this.targetThreeLib.scene, this.otherCamera );
 
@@ -263,14 +259,10 @@ export class PortalLink implements Component{
         gl.colorMask(false,false,false,false);
         gl.depthMask(true);
         // need to clear the depth buffer, in case of occlusion
-        this.three.renderer.clear(false, true, false);
         this.three.renderer.render( this.three.scene, this.three.camera );
 
-
-        //skyMesh2.layers.set(30)
-        gl.colorMask(true,true,true,true);
-        gl.depthMask(true);
-        this.three.camera.layers.set(0); // layer 0 contains everything but portals
+        this.three.camera.layers.set(regularLayer); // layer 0 contains everything but portals
+        this.portalA.layers.set(invisibleLayer);//Portal to render to layer 1
 
     }
 
