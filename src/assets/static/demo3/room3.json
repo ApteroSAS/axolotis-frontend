@@ -1,5 +1,5 @@
 {
-  "room": [
+  "entities": [
     {
       "type": "ecs-component-loader",
       "module": "@root/modules/scenes/demo2/Sky2"

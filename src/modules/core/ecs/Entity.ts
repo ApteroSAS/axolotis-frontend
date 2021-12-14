@@ -49,11 +49,11 @@ export class Entity implements Component {
         return this.components;
     }
 
-    public getComponentByType(type:string):Component[]{
-        let ret:Component[] = [];
+    public getComponentByType<T extends Component>(type:string):T[]{
+        let ret:T[] = [];
         this.components.forEach(comp => {
             if( comp.getType() === type ){
-                ret.push(comp);
+                ret.push(comp as T);
             }
         });
         return ret;

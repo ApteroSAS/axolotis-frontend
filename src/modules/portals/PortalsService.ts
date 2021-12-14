@@ -76,7 +76,7 @@ export class PortalsService implements Component{
         serviceEntity.setService("@root/modules/core/loader/CodeLoaderService", codeLoaderComponent);
         let json = await codeLoaderComponent.loadRoomDefinitionFile(url);
         return await new Promise((resolve, reject) => {
-            codeLoaderComponent.startLoading(world, json.room, (progress, total) => {
+            codeLoaderComponent.startLoading(world, json.entities, (progress, total) => {
                 console.log("["+url+"] : [" + progress + "/" + total + "]");
             }).then(() => {
                 console.log("["+url+"] : ok");

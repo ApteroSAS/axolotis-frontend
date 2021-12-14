@@ -18,7 +18,11 @@ import { WorldService } from "@root/modules/core/WorldService";
 
 
 export class Factory implements WebpackLazyModule, ComponentFactory<PortalLink> {
-    async create(world: WorldEntity, config: {url:string,in:{x:number,y:number,z:number},out:{x:number,y:number,z:number}}): Promise<PortalLink> {
+    async create(world: WorldEntity, config: {
+        url:string,
+        in:{x:number,y:number,z:number},
+        out:{x:number,y:number,z:number},
+    }): Promise<PortalLink> {
         let services = world.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         let codeLoader = await services.getService<CodeLoaderComponent>("@root/modules/core/loader/CodeLoaderService");
         let three = await services.getService<ThreeLib>("@root/modules/three/ThreeLib");
@@ -58,19 +62,27 @@ export class PortalLink implements Component{
         let targetWorldService = await this.targetWorld.getFirstComponentByType<ServiceEntity>(ServiceEntity.name);
         this.targetThreeLib = await targetWorldService.getService<ThreeLib>("@root/modules/three/ThreeLib");
         this.targetPlayerService = await targetWorldService.getService<PlayerService>("@root/modules/controller/PlayerService");
-        this.targetLink  = await world.getFirstComponentByType<PortalLink>(PortalLink.name);//TODO should find portal coresponding to portal B in other word.
-        this.portals.addPortalRenderLoop(()=>{
-            this.renderPortal();
-        });
-        this.portals.addPortalLoop(delta => {
-            this.computerPortalEnter();
-        });
+        let otherPortals:PortalLink[] = await world.getComponentByType<PortalLink>(PortalLink.name);
+        for(const op of otherPortals){
+            if(op.inPosition.position.equals(this.outPosition.position)){// && op.key === this.key
+                this.targetLink = op;
+            }
+        }
+        if(this.targetLink) {
+            this.portals.addPortalRenderLoop(() => {
+                this.renderPortal();
+            });
+            this.portals.addPortalLoop(delta => {
+                this.computerPortalEnter();
+            });
+        }else{
+            throw new Error("invalid portal init: target portal in wrong state");
+        }
     }
 
     constructor(private portals:PortalsService,private three: ThreeLib,private playerService:PlayerService,private worldService:WorldService,
-                a:{position:THREE.Vector3,rotation?:THREE.Euler},
-                b:{position:THREE.Vector3,rotation?:THREE.Euler}
-                ) {
+                private inPosition:{position:THREE.Vector3,rotation?:THREE.Euler},
+                private outPosition:{position:THREE.Vector3,rotation?:THREE.Euler}) {
 
         this.otherCamera = new THREE.PerspectiveCamera( three.camera.fov, window.innerWidth / window.innerHeight, this.three.camera.near, this.three.camera.far );
         three.scene.add(this.otherCamera);
@@ -88,9 +100,9 @@ export class PortalLink implements Component{
             defaultMaterial.clone()
         );
         this.portalA.material.opacity = 0;
-        this.portalA.position.copy(a.position);
-        if(a.rotation) {
-            this.portalA.setRotationFromEuler(a.rotation);
+        this.portalA.position.copy(inPosition.position);
+        if(inPosition.rotation) {
+            this.portalA.setRotationFromEuler(inPosition.rotation);
         }
         this.portalA.layers.set(invisibleLayer);//invisible layer storage
         three.scene.add(this.portalA);
@@ -117,9 +129,9 @@ export class PortalLink implements Component{
             defaultMaterial2.clone()
         );
         this.portalB.material.opacity = 0;
-        this.portalB.position.copy(b.position);
-        if(b.rotation) {
-            this.portalB.setRotationFromEuler(b.rotation);
+        this.portalB.position.copy(outPosition.position);
+        if(outPosition.rotation) {
+            this.portalB.setRotationFromEuler(outPosition.rotation);
         }
         three.scene.add(this.portalB);
 

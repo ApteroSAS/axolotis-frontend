@@ -14,13 +14,26 @@ elif(sys.argv[1] == "build_no_cache"):
 
 elif(sys.argv[1] == "publish"):
     import json
-    f = open('package.json',)
-    data = json.load(f)
-    if data['version']:
-        version = data['version']
-    else:
+
+    try:
         version = sys.argv[2]
-    c("docker build -t "+dockerImage+" .") 
+    except:
+        try:
+            f = open('version.json',)
+            data = json.load(f)
+            if data['version']:
+                version = data['version']
+            else:
+                raise Exception("no version found in file")
+        except:
+            f = open('package.json',)
+            data = json.load(f)
+            if data['version']:
+                version = data['version']
+            else:
+                version = "latest"
+
+    c("docker build -t "+dockerImage+" .")
     c("docker login")
     c("docker tag "+dockerImage+":latest "+registry+"/"+dockerImage+":latest")
     c("docker push "+registry+"/"+dockerImage+":latest")
@@ -30,4 +43,4 @@ elif(sys.argv[1] == "publish"):
     print("tag version :"+version)
 
 else:
-    print("invalid usage");
+    print("invalid usage")

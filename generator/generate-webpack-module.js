@@ -1,4 +1,4 @@
-console.log("start generating code");
+//console.log("start generating code");
 //Parse the ts file find the class that extends WebpackModuleLoader and generate the file axolotis-frontend\src\generated\webpack\module
 const ts = require("typescript");
 var fs = require("fs");
@@ -79,8 +79,11 @@ function generateWebpackModules(
                         if (doesClassImplementInterface(checker, node)) {
                             let cwd = process.cwd();
                             cwd = cwd.replace(/\\/g, "/");
-                            let newPath = cwd + "/src";
-                            let module = "@root" + sourceFile.fileName.replace(newPath, "").replace(".ts", "");
+                            let module = sourceFile.fileName.replace(cwd, "");
+                            module = module.replace("/src", "");
+                            module = module.replace("src", "");
+                            module = module.replace(".ts", "");
+                            module = "@root" + module;
                             dict[module] = module;
                         }
                     }
@@ -95,6 +98,7 @@ function generateWebpackModules(
     {
         let imortsLines = "";
         for (const importLine in dict) {
+            //console.log(importLine);
             let className = "Factory";
             imortsLines += "if (path === \"" + importLine + "\" && classname === \"" + className + "\") {\n" +
                 "        let module = await import(\"" + importLine + "\");\n" +
@@ -119,6 +123,7 @@ function generateWebpackModules(
                 return;
             }
             //file written successfully
+            console.log("./src/generated/webpack/module/ClassNameConverter.ts");
         });
     }
 
@@ -146,6 +151,7 @@ function generateWebpackModules(
                 return;
             }
             //file written successfully
+            console.log("./src/generated/webpack/module/WebpackLoader.ts");
         });
     }
 }

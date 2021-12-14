@@ -12,7 +12,7 @@ export function init() {
     let codeLoaderComponent = new CodeLoaderComponent();
     serviceEntity.setService("@root/modules/core/loader/CodeLoaderService",codeLoaderComponent);
     codeLoaderComponent.searchRoomDefinitionFile().then((json)=>{
-        codeLoaderComponent.startLoading(world, json.room,(progress, total) => {
+        codeLoaderComponent.startLoading(world, json.entities,(progress, total) => {
             console.log("["+progress + "/" + total + "]");
             const progressbar:any = document.getElementById('progress');
             progressbar.style.width = `${((progress/total)*100)}%`;

@@ -1,10 +1,11 @@
-FROM node:16-alpine
+FROM node:17.2.0
 RUN npm i -g npm-check-updates
 COPY ./package.json .
 COPY ./package-lock.json .
 RUN npm i
 COPY . .
 RUN ncu
+RUN npm run pre-build
 RUN npm run build
 
 FROM nginx:1.21.3-alpine
