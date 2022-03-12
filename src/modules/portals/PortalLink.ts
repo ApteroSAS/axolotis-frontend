@@ -63,6 +63,9 @@ export class PortalLink implements Component{
         this.targetThreeLib = await targetWorldService.getService<ThreeLib>("@root/modules/three/ThreeLib");
         this.targetPlayerService = await targetWorldService.getService<PlayerService>("@root/modules/controller/PlayerService");
         let otherPortals:PortalLink[] = await world.getComponentByType<PortalLink>(PortalLink.name);
+        if(otherPortals.length === 0){
+            console.error("no destination portal present")
+        }
         for(const op of otherPortals){
             if(op.inPosition.position.equals(this.outPosition.position)){// && op.key === this.key
                 this.targetLink = op;
