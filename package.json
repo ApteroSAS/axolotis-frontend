@@ -3,20 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "pre-build": "node ./generator/generate-webpack-module.js",
-    "build": "cross-env npm run pre-build && webpack --config ./src/webpack/webpack.prod.js",
+    "build": "cross-env webpack --config ./src/webpack/webpack.prod.js",
     "dev": "webpack serve --config ./src/webpack/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env npm run pre-build && webpack serve --config ./src/webpack/webpack.dev.js"
+    "start": "cross-env webpack serve --config ./src/webpack/webpack.dev.js"
   },
   "devDependencies": {
-    "@types/ammo.js": "github:osman-turan/ammo.js-typings",
-    "@types/three": "^0.135.0",
-    "ammo.js": "kripken/ammo.js",
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3a870a0e8abd1bec1151900ccf962860b525d52c",
+    "@aptero/axolotis-core-plugins": "git+https://github.com/ApteroSAS/axolotis-core-plugins.git#133d1d1b15137ca54abcb603e033482cf0dcd3f3",
     "copy-webpack-plugin": "^9.1.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
-    "html-loader": "^3.0.1",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
     "three": "^0.135.0",
@@ -28,12 +25,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "ammo-debug-drawer": "^1.0.1",
     "eventemitter3": "^4.0.7",
-    "phoenix": "^1.6.4",
-    "three-ammo": "github:ApteroSAS/three-ammo",
-    "three-pathfinding": "^0.15.0",
-    "three-to-ammo": "^1.0.0",
     "tsutils": "^3.21.0"
   }
 }

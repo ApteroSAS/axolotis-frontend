@@ -4,23 +4,18 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
-        index: path.join(__dirname, "page/Index.ts"),
-        room: path.join(__dirname, "page/Room.ts")
+        index: path.join(__dirname, "page/Index.ts")
     },
     experiments:{
         asyncWebAssembly:true,
     },
-    devtool: "source-map",
+    devtool: "eval-source-map",
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 use: "ts-loader",
                 exclude: /node_modules/
-            },
-            {
-                test: /\.html$/i,
-                loader: "html-loader",
             },
             {
                 test: /\.css$/i,
@@ -56,15 +51,6 @@ module.exports = {
                 removeComments: true
             }
         }),
-        new HTMLWebpackPlugin({
-            filename: "room.html",
-            template: path.join(__dirname, "page/room.html"),
-            chunks: ["room"],
-            chunksSortMode: "manual",
-            minify: {
-                removeComments: true
-            }
-        }),
         new CopyWebpackPlugin({
             patterns: [
                 {from: "src/assets/static/", to: "assets/static/" }
@@ -73,11 +59,6 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {from: "src/assets/favicon.ico", to: "favicon.ico" }
-            ]
-        }),
-        new CopyWebpackPlugin({
-            patterns: [
-                {from: "node_modules/ammo.js/builds/ammo.wasm.wasm", to: "assets/js/ammo.wasm.wasm" }
             ]
         })
     ]
