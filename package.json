@@ -9,14 +9,12 @@
     "start": "cross-env webpack serve --config ./src/webpack/webpack.dev.js"
   },
   "devDependencies": {
-    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3a870a0e8abd1bec1151900ccf962860b525d52c",
     "@aptero/axolotis-core-plugins": "git+https://github.com/ApteroSAS/axolotis-core-plugins.git#133d1d1b15137ca54abcb603e033482cf0dcd3f3",
     "copy-webpack-plugin": "^9.1.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
-    "three": "^0.135.0",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.3",
     "webpack": "^5.65.0",

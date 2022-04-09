@@ -1,6 +1,5 @@
 import { initHtml } from "@aptero/axolotis-player";
-import {load} from "@aptero/axolotis-core-plugins";//import axolotis core plugins
-load();
+import "@aptero/axolotis-core-plugins";//import axolotis core plugins
 
 initHtml({
     onProgress: (progress, total) => {
@@ -13,4 +12,3 @@ initHtml({
         (document.getElementById("progresscontainer") as any).className += "load";
     }
 });
-console.log("hello");

@@ -25,7 +25,6 @@ module.exports = {
     },
     resolve: {
         alias: {
-            three: path.resolve("./node_modules/three"),
             "@root": path.resolve("./src")
         },
         fallback: {
@@ -35,7 +34,7 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"]
     },
     output: {
-        filename: "assets/js/[name]-[chunkhash].js",
+        //filename: "assets/js/[name]-[chunkhash].js",
         path: path.resolve(__dirname, "../../dist/")
     },
     optimization: {
@@ -50,6 +49,11 @@ module.exports = {
             minify: {
                 removeComments: true
             }
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {from: path.join(__dirname, "../../node_modules/@aptero/axolotis-core-plugins/build/@aptero/axolotis-core-plugins"), to: "./@aptero/axolotis-core-plugins" }
+            ]
         }),
         new CopyWebpackPlugin({
             patterns: [
